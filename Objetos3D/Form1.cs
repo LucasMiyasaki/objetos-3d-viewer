@@ -53,7 +53,9 @@ namespace Objetos3D
             objeto = new Objeto3D();
             pictureBox1.Image = null;
             escalaAtual = 1;
-        }
+            deslocamentoX = 0;
+            deslocamentoY = 0;
+    }
 
         private void desenhaObjeto()
         {
@@ -116,6 +118,18 @@ namespace Objetos3D
             {
                 escalaAtual -= 0.1f;
             }
+            desenhaObjeto();
+        }
+
+        private void btn10x_Click(object sender, EventArgs e)
+        {
+            escalaAtual *= 10;
+            desenhaObjeto();
+        }
+
+        private void btn100x_Click(object sender, EventArgs e)
+        {
+            escalaAtual *= 100;
             desenhaObjeto();
         }
     }
