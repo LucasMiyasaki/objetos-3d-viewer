@@ -9,10 +9,14 @@ namespace Objetos3D
     {
         private Objeto3D objeto;
 
+        // variáveis da movimentação do objeto
         private bool arrastando = false;
         private Point posicaoMouseAnterior;
         private int deslocamentoX = 0;
         private int deslocamentoY = 0;
+
+        // variável para zoom do objeto
+        private float escalaAtual = 1;
 
         public Form1()
         {
@@ -20,6 +24,10 @@ namespace Objetos3D
             pictureBox1.MouseDown += pictureBox1_MouseDown;
             pictureBox1.MouseMove += pictureBox1_MouseMove;
             pictureBox1.MouseUp += pictureBox1_MouseUp;
+
+            // Permite que o PictureBox capture foco para o MouseWheel funcionar
+            this.MouseWheel += Form1_MouseWheel;
+            pictureBox1.MouseEnter += (s, e) => this.Focus();
         }
 
         private void btnAbrirObjeto_Click(object sender, EventArgs e)
@@ -41,7 +49,7 @@ namespace Objetos3D
         {
             objeto = new Objeto3D();
             pictureBox1.Image = null;
-            nupEscala.Value = 1;
+            escalaAtual = 1;
         }
 
         private void lerArquivo(string caminhoArquivo)
@@ -99,7 +107,7 @@ namespace Objetos3D
             }
         }
 
-        private void desenhaObjeto(float escala = 1)
+        private void desenhaObjeto()
         {
             Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             using (Graphics g = Graphics.FromImage(bmp))
@@ -114,6 +122,7 @@ namespace Objetos3D
 
                 foreach (var face in faces)
                 {
+                    float escala = escalaAtual;
                     var v1 = vertices[face.a - 1]; // .obj começa em 1
                     var v2 = vertices[face.b - 1];
                     var v3 = vertices[face.c - 1];
@@ -129,11 +138,6 @@ namespace Objetos3D
             }
 
             pictureBox1.Image = bmp;
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-            desenhaObjeto((float)nupEscala.Value);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -165,6 +169,22 @@ namespace Objetos3D
         {
             arrastando = false;
         }
+
+        private void Form1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                escalaAtual += 0.1f;
+            }
+            else
+            {
+                escalaAtual -= 0.1f;
+            }
+
+            Debug.WriteLine("MouseWheel no Form: nova escala = " + escalaAtual);
+            desenhaObjeto();
+        }
+
 
     }
 }
