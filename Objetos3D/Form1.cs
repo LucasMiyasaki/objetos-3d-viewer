@@ -8,9 +8,18 @@ namespace Objetos3D
     public partial class Form1 : Form
     {
         private Objeto3D objeto;
+
+        private bool arrastando = false;
+        private Point posicaoMouseAnterior;
+        private int deslocamentoX = 0;
+        private int deslocamentoY = 0;
+
         public Form1()
         {
             InitializeComponent();
+            pictureBox1.MouseDown += pictureBox1_MouseDown;
+            pictureBox1.MouseMove += pictureBox1_MouseMove;
+            pictureBox1.MouseUp += pictureBox1_MouseUp;
         }
 
         private void btnAbrirObjeto_Click(object sender, EventArgs e)
@@ -109,9 +118,9 @@ namespace Objetos3D
                     var v2 = vertices[face.b - 1];
                     var v3 = vertices[face.c - 1];
 
-                    Point p1 = new Point((int)(v1.x * escala) + centroX, (int)(-v1.y * escala) + centroY);
-                    Point p2 = new Point((int)(v2.x * escala) + centroX, (int)(-v2.y * escala) + centroY);
-                    Point p3 = new Point((int)(v3.x * escala) + centroX, (int)(-v3.y * escala) + centroY);
+                    Point p1 = new Point((int)(v1.x * escala) + centroX + deslocamentoX, (int)(-v1.y * escala) + centroY + deslocamentoY);
+                    Point p2 = new Point((int)(v2.x * escala) + centroX + deslocamentoX, (int)(-v2.y * escala) + centroY + deslocamentoY);
+                    Point p3 = new Point((int)(v3.x * escala) + centroX + deslocamentoX, (int)(-v3.y * escala) + centroY + deslocamentoY);
 
                     g.DrawLine(Pens.Black, p1, p2);
                     g.DrawLine(Pens.Black, p2, p3);
@@ -126,5 +135,36 @@ namespace Objetos3D
         {
             desenhaObjeto((float)nupEscala.Value);
         }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                arrastando = true;
+                posicaoMouseAnterior = e.Location;
+            }
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (arrastando)
+            {
+                int dx = e.X - posicaoMouseAnterior.X;
+                int dy = e.Y - posicaoMouseAnterior.Y;
+
+                deslocamentoX += dx;
+                deslocamentoY += dy;
+
+                posicaoMouseAnterior = e.Location;
+
+                desenhaObjeto();
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            arrastando = false;
+        }
+
     }
 }
