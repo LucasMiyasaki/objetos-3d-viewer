@@ -18,6 +18,9 @@ namespace Objetos3D
         // variável para zoom do objeto
         private float escalaAtual = 1;
 
+        // variável de rotacao
+        private bool rotacionando = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -64,6 +67,11 @@ namespace Objetos3D
                 arrastando = true;
                 posicaoMouseAnterior = e.Location;
             }
+            if (e.Button == MouseButtons.Right)
+            {
+                rotacionando = true;
+                posicaoMouseAnterior = e.Location;
+            }
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -80,11 +88,22 @@ namespace Objetos3D
 
                 desenhaObjeto();
             }
+            else if (rotacionando)
+            {
+                int dx = e.X - posicaoMouseAnterior.X;
+                int dy = e.Y - posicaoMouseAnterior.Y;
+
+                objeto.AcumularRotacao(dx, dy);
+                posicaoMouseAnterior = e.Location;
+                desenhaObjeto();
+            }
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             arrastando = false;
+            rotacionando = false;
+
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)

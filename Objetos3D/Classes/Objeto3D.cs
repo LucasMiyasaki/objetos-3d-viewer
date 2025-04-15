@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Windows.Forms;
+using System.Numerics;
 
 namespace Objetos3D.Classes
 {
@@ -13,6 +14,7 @@ namespace Objetos3D.Classes
     {
         private List<(float x, float y, float z)> listaVerticesOriginais;
         private List<(int a, int b, int c)> listaFaces;
+        private Matriz4x4 matrizRotacao = new Matriz4x4();
 
         public Objeto3D()
         {
@@ -113,9 +115,14 @@ namespace Objetos3D.Classes
                     var v2 = vertices[face.b - 1];
                     var v3 = vertices[face.c - 1];
 
-                    Point p1 = new Point((int)(v1.x * escala) + centroX + deslX, (int)(-v1.y * escala) + centroY + deslY);
-                    Point p2 = new Point((int)(v2.x * escala) + centroX + deslX, (int)(-v2.y * escala) + centroY + deslY);
-                    Point p3 = new Point((int)(v3.x * escala) + centroX + deslX, (int)(-v3.y * escala) + centroY + deslY);
+                    var t1 = Matriz4x4.Transform(v1, matrizRotacao);
+                    var t2 = Matriz4x4.Transform(v2, matrizRotacao);
+                    var t3 = Matriz4x4.Transform(v3, matrizRotacao);
+
+
+                    Point p1 = new Point((int)(t1.x * escala) + centroX + deslX, (int)(-t1.y * escala) + centroY + deslY);
+                    Point p2 = new Point((int)(t2.x * escala) + centroX + deslX, (int)(-t2.y * escala) + centroY + deslY);
+                    Point p3 = new Point((int)(t3.x * escala) + centroX + deslX, (int)(-t3.y * escala) + centroY + deslY);
 
                     g.DrawLine(Pens.Black, p1, p2);
                     g.DrawLine(Pens.Black, p2, p3);
@@ -124,6 +131,18 @@ namespace Objetos3D.Classes
             }
 
             return bmp;
+        }
+        public void AcumularRotacao(float deltaX, float deltaY)
+        {
+            float angX = deltaY * 0.01f;
+            float angY = deltaX * 0.01f;
+            float angZ = (deltaX + deltaY) * 0.005f;
+
+            var rotX = Matriz4x4.RotationX(angX);
+            var rotY = Matriz4x4.RotationY(angY);
+            var rotZ = Matriz4x4.RotationZ(angZ);
+
+            matrizRotacao = rotZ * rotY * rotX * matrizRotacao;
         }
     }
 }
