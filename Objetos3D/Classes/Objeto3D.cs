@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Windows.Forms;
 using System.Numerics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Objetos3D.Classes
 {
@@ -98,40 +101,126 @@ namespace Objetos3D.Classes
 
         public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, float escala, int deslX, int deslY)
         {
-            Bitmap bmp = new Bitmap(pictureBoxWidth, pictureBoxHeight);
-            using (Graphics g = Graphics.FromImage(bmp))
+            // Cria o bitmap com formato 24bpp para acesso direto (3 bytes por pixel)
+            Bitmap bmp = new Bitmap(pictureBoxWidth, pictureBoxHeight, PixelFormat.Format24bppRgb);
+
+            // Bloqueia o bitmap para acesso direto à memória
+            Rectangle retangulo = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData bmpData = bmp.LockBits(retangulo, ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+            // Ponteiro para o início dos dados
+            IntPtr ptrInicio = bmpData.Scan0;
+            int stride = bmpData.Stride;
+            int bytesPorPixel = 3; // pois usamos Format24bppRgb
+
+            // Preenche a tela de branco (podemos fazer de forma simples com um for)
+            // n total de bytes = stride * altura
+            int totalBytes = Math.Abs(stride) * bmp.Height;
+            unsafe
             {
-                g.Clear(Color.White);
-
-                int centroX = pictureBoxWidth / 2;
-                int centroY = pictureBoxHeight / 2;
-
-                var vertices = this.GetListaVerticeOriginais();
-                var faces = this.GetListaFaces();
-
-                foreach (var face in faces)
+                byte* p = (byte*)ptrInicio;
+                for (int i = 0; i < totalBytes; i++)
                 {
-                    var v1 = vertices[face.a - 1]; // .obj começa em 1
-                    var v2 = vertices[face.b - 1];
-                    var v3 = vertices[face.c - 1];
-
-                    var t1 = Matriz4x4.Transform(v1, matrizRotacao);
-                    var t2 = Matriz4x4.Transform(v2, matrizRotacao);
-                    var t3 = Matriz4x4.Transform(v3, matrizRotacao);
-
-
-                    Point p1 = new Point((int)(t1.x * escala) + centroX + deslX, (int)(-t1.y * escala) + centroY + deslY);
-                    Point p2 = new Point((int)(t2.x * escala) + centroX + deslX, (int)(-t2.y * escala) + centroY + deslY);
-                    Point p3 = new Point((int)(t3.x * escala) + centroX + deslX, (int)(-t3.y * escala) + centroY + deslY);
-
-                    g.DrawLine(Pens.Black, p1, p2);
-                    g.DrawLine(Pens.Black, p2, p3);
-                    g.DrawLine(Pens.Black, p3, p1);
+                    // Branco = 255 em cada componente
+                    p[i] = 255;
                 }
             }
 
+            // Coordenadas do centro
+            int centroX = pictureBoxWidth / 2;
+            int centroY = pictureBoxHeight / 2;
+
+            // A lista de vértices e faces originais
+            var vertices = this.GetListaVerticeOriginais();
+            var faces = this.GetListaFaces();
+
+            // Para cada face, desenha as três arestas
+            foreach (var face in faces)
+            {
+                var v1 = vertices[face.a - 1];
+                var v2 = vertices[face.b - 1];
+                var v3 = vertices[face.c - 1];
+
+                // Aplica a rotação
+                var t1 = Matriz4x4.Transform(v1, matrizRotacao);
+                var t2 = Matriz4x4.Transform(v2, matrizRotacao);
+                var t3 = Matriz4x4.Transform(v3, matrizRotacao);
+
+                // Converte para coordenadas de tela
+                Point p1 = new Point(
+                    (int)(t1.x * escala) + centroX + deslX,
+                    (int)(-t1.y * escala) + centroY + deslY);
+
+                Point p2 = new Point(
+                    (int)(t2.x * escala) + centroX + deslX,
+                    (int)(-t2.y * escala) + centroY + deslY);
+
+                Point p3 = new Point(
+                    (int)(t3.x * escala) + centroX + deslX,
+                    (int)(-t3.y * escala) + centroY + deslY);
+
+                // Desenha as linhas em memória (preto)
+                DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
+                DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
+                DesenharLinhaBresenham(bmpData, p3.X, p3.Y, p1.X, p1.Y, Color.Black);
+            }
+
+            // Libera o acesso ao bitmap
+            bmp.UnlockBits(bmpData);
+
+            // Retorna o bitmap resultante
             return bmp;
         }
+
+        private unsafe void DesenharLinhaBresenham(BitmapData bmpData, int x0, int y0, int x1, int y1, Color cor)
+        {
+            int bytesPorPixel = 3; // Format24bppRgb
+            int stride = bmpData.Stride;
+
+            // Função local que pinta 1 pixel (x,y) em cor "cor"
+            void SetPixel(int x, int y)
+            {
+                // Certifique-se de que (x,y) esteja dentro do bitmap
+                if (x < 0 || x >= bmpData.Width || y < 0 || y >= bmpData.Height)
+                    return;
+
+                // Ponteiro para o início da linha
+                byte* linha = (byte*)bmpData.Scan0 + (y * stride);
+                // Posição do pixel em X
+                int pos = x * bytesPorPixel;
+
+                // 24bpp => B, G, R
+                linha[pos + 0] = cor.B;  // Blue
+                linha[pos + 1] = cor.G;  // Green
+                linha[pos + 2] = cor.R;  // Red
+            }
+
+            // Algoritmo de Bresenham
+            int dx = Math.Abs(x1 - x0);
+            int sx = x0 < x1 ? 1 : -1;
+            int dy = -Math.Abs(y1 - y0);
+            int sy = y0 < y1 ? 1 : -1;
+            int err = dx + dy;
+
+            while (true)
+            {
+                SetPixel(x0, y0);
+                if (x0 == x1 && y0 == y1) break;
+                int e2 = 2 * err;
+                if (e2 >= dy)
+                {
+                    err += dy;
+                    x0 += sx;
+                }
+                if (e2 <= dx)
+                {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+        }
+
+
         public void AcumularRotacao(float deltaX, float deltaY)
         {
             float angX = deltaY * 0.01f;
