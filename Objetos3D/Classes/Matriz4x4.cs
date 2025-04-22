@@ -59,6 +59,15 @@ namespace Objetos3D.Classes
             return m;
         }
 
+        public static Matriz4x4 Escala(float sx, float sy, float sz)
+        {
+            var m = new Matriz4x4();
+            m.M[0, 0] = sx;
+            m.M[1, 1] = sy;
+            m.M[2, 2] = sz;
+            return m;
+        }
+
         public static (float x, float y, float z) Transform((float x, float y, float z) v, Matriz4x4 m)
         {
             float x = v.x * m.M[0, 0] + v.y * m.M[0, 1] + v.z * m.M[0, 2];
