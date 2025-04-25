@@ -9,18 +9,24 @@ namespace Objetos3D
     {
         private Objeto3D objeto;
 
+        // variável da abertura do arquivo
+        string caminhoArquivo;
+
         // variáveis da movimentação do objeto
         private bool arrastando = false;
         private Point posicaoMouseAnterior;
         private int deslocamentoX = 0;
         private int deslocamentoY = 0;
 
-        // variável para zoom do objeto
+        // variável para escala do objeto
         private string eixoEscalaAtivo = "";
         private float escalaAtual = 1;
 
         // variável de rotacao
         private bool rotacionando = false;
+        private int rotacaoX = 0;
+        private int rotacaoY = 0;
+        private int rotacaoZ = 0;
 
         public Form1()
         {
@@ -39,29 +45,28 @@ namespace Objetos3D
 
         }
 
-        private void btnAbrirObjeto_Click(object sender, EventArgs e)
+        private void abrirNovo()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Arquivos OBJ (*.obj)|*.obj";
-            openFileDialog.Title = "Selecione um arquivo .obj";
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                reiniciar();
-                string caminhoArquivo = openFileDialog.FileName;
-                objeto.lerArquivo(caminhoArquivo);
-                desenhaObjeto();
-            }
+            objeto = new Objeto3D();
+            pictureBox1.Image = null;
+            reiniciar();
         }
 
         private void reiniciar()
         {
-            objeto = new Objeto3D();
-            pictureBox1.Image = null;
             escalaAtual = 1;
             deslocamentoX = 0;
             deslocamentoY = 0;
-    }
+            rotacaoX = 0;
+            rotacaoY = 0;
+            rotacaoZ = 0;
+            tbTransX.Value = 0;
+            tbTransY.Value = 0;
+            tbTransZ.Value = 0;
+            tbRotacaoX.Value = 0;
+            tbRotacaoY.Value = 0;
+            tbRotacaoZ.Value = 0;
+        }
 
         private void desenhaObjeto()
         {
@@ -92,8 +97,10 @@ namespace Objetos3D
                 deslocamentoX += dx;
                 deslocamentoY += dy;
 
-                posicaoMouseAnterior = e.Location;
+                tbTransX.Value = deslocamentoX;
+                tbTransY.Value = deslocamentoY;
 
+                posicaoMouseAnterior = e.Location;
                 desenhaObjeto();
             }
             else if (rotacionando)
@@ -101,7 +108,11 @@ namespace Objetos3D
                 if ((ModifierKeys & Keys.Control) == Keys.Control)
                 {
                     int dx = e.X - posicaoMouseAnterior.X;
+
                     objeto.AcumularRotacaoZ(dx);
+
+                    rotacaoZ = Clamp(rotacaoZ + dx, tbRotacaoZ.Minimum, tbRotacaoZ.Maximum);
+                    tbRotacaoZ.Value = rotacaoZ;
                 }
                 else
                 {
@@ -109,12 +120,20 @@ namespace Objetos3D
                     int dy = e.Y - posicaoMouseAnterior.Y;
 
                     objeto.AcumularRotacao(dx, dy);
+
+                    rotacaoX = Clamp(rotacaoX + dx, tbRotacaoX.Minimum, tbRotacaoX.Maximum);
+                    rotacaoY = Clamp(rotacaoY + dy, tbRotacaoY.Minimum, tbRotacaoY.Maximum);
+
+                    tbRotacaoX.Value = rotacaoX;
+                    tbRotacaoY.Value = rotacaoY;
                 }
-                
+
                 posicaoMouseAnterior = e.Location;
                 desenhaObjeto();
             }
         }
+
+        private int Clamp(int v, int min, int max) => Math.Min(Math.Max(v, min), max);
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
@@ -148,7 +167,6 @@ namespace Objetos3D
             desenhaObjeto();
         }
 
-
         private void btn10x_Click(object sender, EventArgs e)
         {
             escalaAtual *= 10;
@@ -173,5 +191,92 @@ namespace Objetos3D
             eixoEscalaAtivo = "";
         }
 
+        private void abrirArquivoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Arquivos OBJ (*.obj)|*.obj";
+            openFileDialog.Title = "Selecione um arquivo .obj";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                abrirNovo();
+                caminhoArquivo = openFileDialog.FileName;
+                objeto.lerArquivo(caminhoArquivo);
+                desenhaObjeto();
+            }
+        }
+
+        private void tbTransX_Scroll(object sender, EventArgs e)
+        {
+            deslocamentoX = tbTransX.Value;
+            desenhaObjeto();
+        }
+
+        private void tbTransY_Scroll(object sender, EventArgs e)
+        {
+            deslocamentoY = tbTransY.Value;
+            desenhaObjeto();
+        }
+
+        private void tbTransZ_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbRotacaoX_Scroll(object sender, EventArgs e)
+        {
+            int delta = tbRotacaoX.Value - rotacaoX;
+            rotacaoX = tbRotacaoX.Value;
+
+            objeto.AcumularRotacao(delta, 0);
+            desenhaObjeto();
+        }
+
+        private void tbRotacaoY_Scroll(object sender, EventArgs e)
+        {
+            int delta = tbRotacaoY.Value - rotacaoY;
+            rotacaoY = tbRotacaoY.Value;
+
+            objeto.AcumularRotacao(0, delta);
+            desenhaObjeto();
+        }
+
+        private void tbRotacaoZ_Scroll(object sender, EventArgs e)
+        {
+            int delta = tbRotacaoZ.Value - rotacaoZ;
+            rotacaoZ = tbRotacaoZ.Value;
+
+            objeto.AcumularRotacaoZ(delta);
+            desenhaObjeto();
+        }
+
+
+        private void tbEscalaG_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbEscalaX_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbEscalaY_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbEscalaZ_Scroll(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            reiniciar();
+            objeto = new Objeto3D();
+            objeto.lerArquivo(caminhoArquivo);
+            desenhaObjeto();
+        }
     }
 }
