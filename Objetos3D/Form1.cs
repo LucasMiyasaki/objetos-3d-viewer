@@ -16,6 +16,7 @@ namespace Objetos3D
         private int deslocamentoY = 0;
 
         // variável para zoom do objeto
+        private string eixoEscalaAtivo = "";
         private float escalaAtual = 1;
 
         // variável de rotacao
@@ -31,6 +32,11 @@ namespace Objetos3D
             // Permite que o PictureBox capture foco para o MouseWheel funcionar
             this.MouseWheel += Form1_MouseWheel;
             pictureBox1.MouseEnter += (s, e) => this.Focus();
+
+            this.KeyDown += Form1_KeyDown;
+            this.KeyUp += Form1_KeyUp;
+            this.KeyPreview = true; // Importante: permite que o formulário capture as teclas mesmo com o foco no PictureBox
+
         }
 
         private void btnAbrirObjeto_Click(object sender, EventArgs e)
@@ -59,7 +65,7 @@ namespace Objetos3D
 
         private void desenhaObjeto()
         {
-            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, escalaAtual, deslocamentoX, deslocamentoY);
+            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, deslocamentoX, deslocamentoY);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -110,16 +116,29 @@ namespace Objetos3D
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
+            float fator = (e.Delta > 0) ? 1.1f : 0.9f;
+
+            if (eixoEscalaAtivo == "X")
             {
-                escalaAtual += 0.1f;
+                objeto.AcumularEscala(fator, 1f, 1f);
+            }
+            else if (eixoEscalaAtivo == "Y")
+            {
+                objeto.AcumularEscala(1f, fator, 1f);
+            }
+            else if (eixoEscalaAtivo == "Z")
+            {
+                objeto.AcumularEscala(1f, 1f, fator);
             }
             else
             {
-                escalaAtual -= 0.1f;
+                // Escala uniforme se nenhuma tecla estiver pressionada
+                objeto.AcumularEscala(fator, fator, fator);
             }
+
             desenhaObjeto();
         }
+
 
         private void btn10x_Click(object sender, EventArgs e)
         {
@@ -132,5 +151,18 @@ namespace Objetos3D
             escalaAtual *= 100;
             desenhaObjeto();
         }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.X) eixoEscalaAtivo = "X";
+            if (e.KeyCode == Keys.Y) eixoEscalaAtivo = "Y";
+            if (e.KeyCode == Keys.Z) eixoEscalaAtivo = "Z";
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            eixoEscalaAtivo = "";
+        }
+
     }
 }
