@@ -136,6 +136,28 @@
             abrirArquivoToolStripMenuItem.Size = new Size(181, 26);
             abrirArquivoToolStripMenuItem.Text = "Abrir Arquivo";
             abrirArquivoToolStripMenuItem.Click += abrirArquivoToolStripMenuItem_Click;
+            // Depois de criar menuStrip1
+            ajudaToolStripMenuItem = new ToolStripMenuItem();
+            controlesToolStripMenuItem = new ToolStripMenuItem();
+
+            menuStrip1.Items.Add(ajudaToolStripMenuItem);
+
+            // 
+            // ajudaToolStripMenuItem
+            //
+            ajudaToolStripMenuItem.DropDownItems.AddRange(
+                new ToolStripItem[] { controlesToolStripMenuItem });
+            ajudaToolStripMenuItem.Name = "ajudaToolStripMenuItem";
+            ajudaToolStripMenuItem.Size = new Size(62, 24);
+            ajudaToolStripMenuItem.Text = "Ajuda";
+            //
+            // controlesToolStripMenuItem
+            //
+            controlesToolStripMenuItem.Name = "controlesToolStripMenuItem";
+            controlesToolStripMenuItem.Size = new Size(215, 26);
+            controlesToolStripMenuItem.Text = "Controles (Mouse)";
+            controlesToolStripMenuItem.Click += controlesToolStripMenuItem_Click;
+
             // 
             // panel1
             // 
@@ -557,5 +579,8 @@
         private TrackBar tbEscalaG;
         private Panel panel5;
         private Button button1;
+        private ToolStripMenuItem ajudaToolStripMenuItem;
+        private ToolStripMenuItem controlesToolStripMenuItem;
+
     }
 }

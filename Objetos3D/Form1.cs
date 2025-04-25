@@ -352,5 +352,12 @@ namespace Objetos3D
             objeto.lerArquivo(caminhoArquivo);
             desenhaObjeto();
         }
+
+        private void controlesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new ControlesForm())
+                dlg.ShowDialog(this);
+        }
+
     }
 }
