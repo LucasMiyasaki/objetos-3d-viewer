@@ -98,10 +98,19 @@ namespace Objetos3D
             }
             else if (rotacionando)
             {
-                int dx = e.X - posicaoMouseAnterior.X;
-                int dy = e.Y - posicaoMouseAnterior.Y;
+                if ((ModifierKeys & Keys.Control) == Keys.Control)
+                {
+                    int dx = e.X - posicaoMouseAnterior.X;
+                    objeto.AcumularRotacaoZ(dx);
+                }
+                else
+                {
+                    int dx = e.X - posicaoMouseAnterior.X;
+                    int dy = e.Y - posicaoMouseAnterior.Y;
 
-                objeto.AcumularRotacao(dx, dy);
+                    objeto.AcumularRotacao(dx, dy);
+                }
+                
                 posicaoMouseAnterior = e.Location;
                 desenhaObjeto();
             }

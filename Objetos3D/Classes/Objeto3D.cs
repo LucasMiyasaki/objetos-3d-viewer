@@ -234,6 +234,16 @@ namespace Objetos3D.Classes
             matrizRotacao = rotY * rotX * matrizRotacao;
         }
 
+        public void AcumularRotacaoZ(float deltaX)
+        {
+            float angZ = deltaX * 0.01f;
+
+            var rotZ = Matriz4x4.RotationZ(angZ);
+
+            matrizRotacao = rotZ * matrizRotacao;
+        }
+
+
         public void AcumularEscala(float escX, float escY, float escZ)
         {
             var escalaNova = Matriz4x4.Escala(escX, escY, escZ);
