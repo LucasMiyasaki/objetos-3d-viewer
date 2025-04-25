@@ -371,6 +371,8 @@
             // 
             tbEscalaZ.AutoSize = false;
             tbEscalaZ.Location = new Point(32, 185);
+            tbEscalaZ.Maximum = 50;
+            tbEscalaZ.Minimum = -50;
             tbEscalaZ.Name = "tbEscalaZ";
             tbEscalaZ.Size = new Size(199, 34);
             tbEscalaZ.TabIndex = 11;
@@ -391,6 +393,8 @@
             // 
             tbEscalaY.AutoSize = false;
             tbEscalaY.Location = new Point(32, 151);
+            tbEscalaY.Maximum = 50;
+            tbEscalaY.Minimum = -50;
             tbEscalaY.Name = "tbEscalaY";
             tbEscalaY.Size = new Size(199, 34);
             tbEscalaY.TabIndex = 9;
@@ -411,6 +415,8 @@
             // 
             tbEscalaX.AutoSize = false;
             tbEscalaX.Location = new Point(32, 119);
+            tbEscalaX.Maximum = 50;
+            tbEscalaX.Minimum = -50;
             tbEscalaX.Name = "tbEscalaX";
             tbEscalaX.Size = new Size(199, 34);
             tbEscalaX.TabIndex = 7;
@@ -441,6 +447,8 @@
             // 
             tbEscalaG.AutoSize = false;
             tbEscalaG.Location = new Point(32, 86);
+            tbEscalaG.Maximum = 50;
+            tbEscalaG.Minimum = -50;
             tbEscalaG.Name = "tbEscalaG";
             tbEscalaG.Size = new Size(199, 34);
             tbEscalaG.TabIndex = 0;

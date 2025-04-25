@@ -20,13 +20,23 @@ namespace Objetos3D
 
         // variável para escala do objeto
         private string eixoEscalaAtivo = "";
-        private float escalaAtual = 1;
 
         // variável de rotacao
         private bool rotacionando = false;
         private int rotacaoX = 0;
         private int rotacaoY = 0;
         private int rotacaoZ = 0;
+
+        // ­­­­­­­­­­­­­­­­­­­Escala (trackbars)
+        private int escGAc = 0;
+        private int escXAc = 0;
+        private int escYAc = 0;
+        private int escZAc = 0;
+        private const float ESC_STEP = 1.10f;
+        private static readonly int STEPS_10X = (int)Math.Round(Math.Log(10) / Math.Log(ESC_STEP));
+        private static readonly int STEPS_100X = (int)Math.Round(Math.Log(100) / Math.Log(ESC_STEP));
+
+
 
         public Form1()
         {
@@ -54,7 +64,6 @@ namespace Objetos3D
 
         private void reiniciar()
         {
-            escalaAtual = 1;
             deslocamentoX = 0;
             deslocamentoY = 0;
             rotacaoX = 0;
@@ -66,6 +75,14 @@ namespace Objetos3D
             tbRotacaoX.Value = 0;
             tbRotacaoY.Value = 0;
             tbRotacaoZ.Value = 0;
+            escGAc = 0;
+            escXAc = 0;
+            escYAc = 0;
+            escZAc = 0;
+            tbEscalaG.Value = 0;
+            tbEscalaX.Value = 0;
+            tbEscalaY.Value = 0;
+            tbEscalaZ.Value = 0;
         }
 
         private void desenhaObjeto()
@@ -145,23 +162,36 @@ namespace Objetos3D
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
             float fator = (e.Delta > 0) ? 1.1f : 0.9f;
+            int step = (e.Delta > 0) ? 1 : -1;
 
             if (eixoEscalaAtivo == "X")
             {
                 objeto.AcumularEscala(fator, 1f, 1f);
+
+                escXAc = Clamp(escXAc + step, tbEscalaX.Minimum, tbEscalaX.Maximum);
+                tbEscalaX.Value = escXAc;
             }
             else if (eixoEscalaAtivo == "Y")
             {
                 objeto.AcumularEscala(1f, fator, 1f);
+
+                escYAc = Clamp(escYAc + step, tbEscalaY.Minimum, tbEscalaY.Maximum);
+                tbEscalaY.Value = escYAc;
             }
             else if (eixoEscalaAtivo == "Z")
             {
                 objeto.AcumularEscala(1f, 1f, fator);
+
+                escZAc = Clamp(escZAc + step, tbEscalaZ.Minimum, tbEscalaZ.Maximum);
+                tbEscalaZ.Value = escZAc;
             }
             else
             {
                 // Escala uniforme se nenhuma tecla estiver pressionada
                 objeto.AcumularEscala(fator, fator, fator);
+
+                escGAc = Clamp(escGAc + step, tbEscalaG.Minimum, tbEscalaG.Maximum);
+                tbEscalaG.Value = escGAc;
             }
 
             desenhaObjeto();
@@ -169,15 +199,26 @@ namespace Objetos3D
 
         private void btn10x_Click(object sender, EventArgs e)
         {
-            escalaAtual *= 10;
+            // 1. Avança o TrackBar global a quantidade de passos que equivale a ×10
+            escGAc = Clamp(escGAc + STEPS_10X, tbEscalaG.Minimum, tbEscalaG.Maximum);
+            tbEscalaG.Value = escGAc;
+
+            // 2. Calcula o fator e aplica
+            float fator = (float)Math.Pow(ESC_STEP, STEPS_10X);
+            objeto.AcumularEscala(fator, fator, fator);
             desenhaObjeto();
         }
 
         private void btn100x_Click(object sender, EventArgs e)
         {
-            escalaAtual *= 100;
+            escGAc = Clamp(escGAc + STEPS_100X, tbEscalaG.Minimum, tbEscalaG.Maximum);
+            tbEscalaG.Value = escGAc;
+
+            float fator = (float)Math.Pow(ESC_STEP, STEPS_100X);
+            objeto.AcumularEscala(fator, fator, fator);
             desenhaObjeto();
         }
+
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -253,23 +294,56 @@ namespace Objetos3D
 
         private void tbEscalaG_Scroll(object sender, EventArgs e)
         {
+            int delta = tbEscalaG.Value - escGAc;
+            escGAc = tbEscalaG.Value;
 
+            if (delta != 0)
+            {
+                float f = (float)Math.Pow(ESC_STEP, delta);   // fator incremental
+                objeto.AcumularEscala(f, f, f);
+                desenhaObjeto();
+            }
         }
 
         private void tbEscalaX_Scroll(object sender, EventArgs e)
         {
+            int delta = tbEscalaX.Value - escXAc;
+            escXAc = tbEscalaX.Value;
 
+            if (delta != 0)
+            {
+                float f = (float)Math.Pow(ESC_STEP, delta);
+                objeto.AcumularEscala(f, 1f, 1f);
+                desenhaObjeto();
+            }
         }
 
         private void tbEscalaY_Scroll(object sender, EventArgs e)
         {
+            int delta = tbEscalaY.Value - escYAc;
+            escYAc = tbEscalaY.Value;
 
+            if (delta != 0)
+            {
+                float f = (float)Math.Pow(ESC_STEP, delta);
+                objeto.AcumularEscala(1f, f, 1f);
+                desenhaObjeto();
+            }
         }
 
         private void tbEscalaZ_Scroll(object sender, EventArgs e)
         {
+            int delta = tbEscalaZ.Value - escZAc;
+            escZAc = tbEscalaZ.Value;
 
+            if (delta != 0)
+            {
+                float f = (float)Math.Pow(ESC_STEP, delta);
+                objeto.AcumularEscala(1f, 1f, f);
+                desenhaObjeto();
+            }
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
