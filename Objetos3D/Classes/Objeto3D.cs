@@ -143,7 +143,7 @@ namespace Objetos3D.Classes
                 var v3 = vertices[face.c - 1];
 
                 // Aplica a rotação e escala
-                var matrizFinal = matrizEscala * matrizRotacao;
+                var matrizFinal = matrizRotacao * matrizEscala;
                 var t1 = Matriz4x4.Transform(v1, matrizFinal);
                 var t2 = Matriz4x4.Transform(v2, matrizFinal);
                 var t3 = Matriz4x4.Transform(v3, matrizFinal);
