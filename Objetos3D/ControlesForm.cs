@@ -42,8 +42,8 @@ namespace Objetos3D
 
 ⌨️  TECLADO
 • X  .............................................. Seleciona eixo X para escala via roda
-• Y  .............................................. Seleciona eixo Y
-• Z  .............................................. Seleciona eixo Z
+• Y  .............................................. Seleciona eixo Y para escala via roda
+• Z  .............................................. Seleciona eixo Z para escala via roda
 • *TrackBars* ................................ Deslocamento, rotação e escala finos
 • Botões 10× / 100× .......................... Zoom rápido
 

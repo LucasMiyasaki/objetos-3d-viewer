@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace Objetos3D.Classes
 {
-    internal class Objeto3D
+    public class Objeto3D
     {
         private List<(float x, float y, float z)> listaVerticesOriginais;
         private List<(int a, int b, int c)> listaFaces;
@@ -25,6 +25,16 @@ namespace Objetos3D.Classes
             listaVerticesOriginais = new List<(float x, float y, float z)>();
             listaFaces = new List<(int a, int b, int c)>();
         }
+
+        public Objeto3D(Objeto3D objeto)
+        {
+            this.listaVerticesOriginais = objeto.listaVerticesOriginais.ToList();
+            this.listaFaces = objeto.listaFaces.ToList();
+
+            this.matrizRotacao = new Matriz4x4(objeto.matrizRotacao);
+            this.matrizEscala = new Matriz4x4(objeto.matrizEscala);
+        }
+
 
         public void AddVertice(float x, float y, float z)
         {
@@ -100,7 +110,7 @@ namespace Objetos3D.Classes
             }
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, int deslX, int deslY)
+        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, int deslX, int deslY, Matriz4x4 m = null)
         {
             // Cria o bitmap com formato 24bpp para acesso direto (3 bytes por pixel)
             Bitmap bmp = new Bitmap(pictureBoxWidth, pictureBoxHeight, PixelFormat.Format24bppRgb);
@@ -144,6 +154,8 @@ namespace Objetos3D.Classes
 
                 // Aplica a rotação e escala
                 var matrizFinal = matrizRotacao * matrizEscala;
+                if (m != null)
+                    matrizFinal *= m;
                 var t1 = Matriz4x4.Transform(v1, matrizFinal);
                 var t2 = Matriz4x4.Transform(v2, matrizFinal);
                 var t3 = Matriz4x4.Transform(v3, matrizFinal);
