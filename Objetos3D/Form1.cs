@@ -17,6 +17,7 @@ namespace Objetos3D
         private Point posicaoMouseAnterior;
         private int deslocamentoX = 0;
         private int deslocamentoY = 0;
+        private int deslocamentoZ = 0;
 
         // variável para escala do objeto
         private string eixoEscalaAtivo = "";
@@ -87,7 +88,7 @@ namespace Objetos3D
 
         private void desenhaObjeto()
         {
-            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, deslocamentoX, deslocamentoY);
+            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -114,7 +115,9 @@ namespace Objetos3D
                     int dy = e.Y - posicaoMouseAnterior.Y;
 
                     deslocamentoX += dx;
-                    deslocamentoY += dy;
+                    deslocamentoY += -dy;
+
+                    objeto.AcumularTranslacao(dx, -dy, 0);
 
                     tbTransX.Value = deslocamentoX;
                     tbTransY.Value = deslocamentoY;
@@ -256,19 +259,26 @@ namespace Objetos3D
 
         private void tbTransX_Scroll(object sender, EventArgs e)
         {
+            int delta = tbTransX.Value - deslocamentoX;
             deslocamentoX = tbTransX.Value;
+            objeto.AcumularTranslacao(delta, 0, 0);
             desenhaObjeto();
         }
 
         private void tbTransY_Scroll(object sender, EventArgs e)
         {
-            deslocamentoY = tbTransY.Value;
+            int delta = tbTransY.Value + deslocamentoY;
+            deslocamentoY = -tbTransY.Value;
+            objeto.AcumularTranslacao(0, delta, 0);
             desenhaObjeto();
         }
 
         private void tbTransZ_Scroll(object sender, EventArgs e)
         {
-
+            int delta = tbTransZ.Value - deslocamentoZ;
+            deslocamentoZ = tbTransZ.Value;
+            objeto.AcumularTranslacao(0, 0, delta);
+            desenhaObjeto();
         }
 
         private void tbRotacaoX_Scroll(object sender, EventArgs e)

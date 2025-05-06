@@ -17,8 +17,7 @@ namespace Objetos3D.Classes
     {
         private List<(float x, float y, float z)> listaVerticesOriginais;
         private List<(int a, int b, int c)> listaFaces;
-        private Matriz4x4 matrizRotacao = new Matriz4x4();
-        private Matriz4x4 matrizEscala = new Matriz4x4();
+        private Matriz4x4 matrizAcumulada = new Matriz4x4();
 
         private Bitmap _frameBuffer;
         private readonly object _frameLock = new();
@@ -34,8 +33,7 @@ namespace Objetos3D.Classes
             this.listaVerticesOriginais = objeto.listaVerticesOriginais.ToList();
             this.listaFaces = objeto.listaFaces.ToList();
 
-            this.matrizRotacao = new Matriz4x4(objeto.matrizRotacao);
-            this.matrizEscala = new Matriz4x4(objeto.matrizEscala);
+            this.matrizAcumulada = new Matriz4x4(objeto.matrizAcumulada);
         }
 
 
@@ -126,7 +124,7 @@ namespace Objetos3D.Classes
             return _frameBuffer;
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth,int pictureBoxHeight,int deslX,int deslY,Matriz4x4 m = null)
+        public Bitmap desenhaObjeto(int pictureBoxWidth,int pictureBoxHeight,Matriz4x4 m = null)
         {
             Bitmap bmp = GetFrameBuffer(pictureBoxWidth, pictureBoxHeight);
 
@@ -152,19 +150,19 @@ namespace Objetos3D.Classes
                     var v2 = vertices[face.b - 1];
                     var v3 = vertices[face.c - 1];
 
-                    var matrizFinal = matrizRotacao * matrizEscala;
+                    var matrizFinal = matrizAcumulada;
                     if (m != null) matrizFinal *= m;
 
                     var t1 = Matriz4x4.Transform(v1, matrizFinal);
                     var t2 = Matriz4x4.Transform(v2, matrizFinal);
                     var t3 = Matriz4x4.Transform(v3, matrizFinal);
 
-                    Point p1 = new((int)t1.x + centroX + deslX,
-                                   (int)-t1.y + centroY + deslY);
-                    Point p2 = new((int)t2.x + centroX + deslX,
-                                   (int)-t2.y + centroY + deslY);
-                    Point p3 = new((int)t3.x + centroX + deslX,
-                                   (int)-t3.y + centroY + deslY);
+                    Point p1 = new((int)t1.x + centroX,
+                                   (int)-t1.y + centroY);
+                    Point p2 = new((int)t2.x + centroX,
+                                   (int)-t2.y + centroY);
+                    Point p3 = new((int)t3.x + centroX,
+                                   (int)-t3.y + centroY);
 
                     DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
                     DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
@@ -235,7 +233,7 @@ namespace Objetos3D.Classes
             var rotX = Matriz4x4.RotationX(angX);
             var rotY = Matriz4x4.RotationY(angY);
 
-            matrizRotacao = rotY * rotX * matrizRotacao;
+            matrizAcumulada = rotY * rotX * matrizAcumulada;
         }
 
         public void AcumularRotacaoZ(float deltaX)
@@ -244,14 +242,20 @@ namespace Objetos3D.Classes
 
             var rotZ = Matriz4x4.RotationZ(angZ);
 
-            matrizRotacao = rotZ * matrizRotacao;
+            matrizAcumulada = rotZ * matrizAcumulada;
         }
 
 
         public void AcumularEscala(float escX, float escY, float escZ)
         {
             var escalaNova = Matriz4x4.Escala(escX, escY, escZ);
-            matrizEscala = escalaNova * matrizEscala;
+            matrizAcumulada = escalaNova * matrizAcumulada;
+        }
+
+        public void AcumularTranslacao(float x, float y, float z)
+        {
+            var translacao = Matriz4x4.Translacao(x, y, z);
+            matrizAcumulada = translacao * matrizAcumulada;
         }
     }
 }

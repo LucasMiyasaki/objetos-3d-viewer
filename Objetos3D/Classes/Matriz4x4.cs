@@ -73,6 +73,15 @@ namespace Objetos3D.Classes
             return m;
         }
 
+        public static Matriz4x4 Translacao(float tx, float ty, float tz)
+        {
+            var m = new Matriz4x4();
+            m.M[0, 3] = tx;
+            m.M[1, 3] = ty;
+            m.M[2, 3] = tz;
+            return m;
+        }
+
         public static (float x, float y, float z) Transform((float x, float y, float z) v, Matriz4x4 m)
         {
             float x = v.x * m.M[0, 0] + v.y * m.M[0, 1] + v.z * m.M[0, 2] + m.M[0, 3];
@@ -122,6 +131,7 @@ namespace Objetos3D.Classes
             float angulo = (float)(45 * Math.PI / 180.0); // 45°
             m.M[0, 2] = (float)(-Math.Cos(angulo));
             m.M[1, 2] = (float)(-Math.Sin(angulo));
+            m.M[2, 2] = 0f;
             return m;
         }
 
@@ -131,6 +141,7 @@ namespace Objetos3D.Classes
             float angulo = (float)(45 * Math.PI / 180.0); // 45°
             m.M[0, 2] = (float)(-0.5 * Math.Cos(angulo));
             m.M[1, 2] = (float)(-0.5 * Math.Sin(angulo));
+            m.M[2, 2] = 0f;
             return m;
         }
 
