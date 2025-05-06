@@ -34,6 +34,8 @@
             menuStrip1 = new MenuStrip();
             arquivoToolStripMenuItem = new ToolStripMenuItem();
             abrirArquivoToolStripMenuItem = new ToolStripMenuItem();
+            ajudaToolStripMenuItem = new ToolStripMenuItem();
+            controlesToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
             label2 = new Label();
             panel2 = new Panel();
@@ -64,6 +66,8 @@
             tbEscalaG = new TrackBar();
             panel5 = new Panel();
             button1 = new Button();
+            panel6 = new Panel();
+            button2 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
@@ -81,6 +85,7 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).BeginInit();
             panel5.SuspendLayout();
+            panel6.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
@@ -116,7 +121,7 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { arquivoToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { arquivoToolStripMenuItem, ajudaToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(1403, 28);
@@ -136,28 +141,20 @@
             abrirArquivoToolStripMenuItem.Size = new Size(181, 26);
             abrirArquivoToolStripMenuItem.Text = "Abrir Arquivo";
             abrirArquivoToolStripMenuItem.Click += abrirArquivoToolStripMenuItem_Click;
-            // Depois de criar menuStrip1
-            ajudaToolStripMenuItem = new ToolStripMenuItem();
-            controlesToolStripMenuItem = new ToolStripMenuItem();
-
-            menuStrip1.Items.Add(ajudaToolStripMenuItem);
-
             // 
             // ajudaToolStripMenuItem
-            //
-            ajudaToolStripMenuItem.DropDownItems.AddRange(
-                new ToolStripItem[] { controlesToolStripMenuItem });
+            // 
+            ajudaToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { controlesToolStripMenuItem });
             ajudaToolStripMenuItem.Name = "ajudaToolStripMenuItem";
             ajudaToolStripMenuItem.Size = new Size(62, 24);
             ajudaToolStripMenuItem.Text = "Ajuda";
-            //
+            // 
             // controlesToolStripMenuItem
-            //
+            // 
             controlesToolStripMenuItem.Name = "controlesToolStripMenuItem";
-            controlesToolStripMenuItem.Size = new Size(215, 26);
+            controlesToolStripMenuItem.Size = new Size(213, 26);
             controlesToolStripMenuItem.Text = "Controles (Mouse)";
             controlesToolStripMenuItem.Click += controlesToolStripMenuItem_Click;
-
             // 
             // panel1
             // 
@@ -496,12 +493,32 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // panel6
+            // 
+            panel6.BackColor = Color.White;
+            panel6.Controls.Add(button2);
+            panel6.Location = new Point(1146, 706);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(245, 60);
+            panel6.TabIndex = 14;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(13, 15);
+            button2.Name = "button2";
+            button2.Size = new Size(218, 29);
+            button2.TabIndex = 0;
+            button2.Text = "Projeções";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             ClientSize = new Size(1403, 830);
+            Controls.Add(panel6);
             Controls.Add(panel5);
             Controls.Add(panel4);
             Controls.Add(panel3);
@@ -534,6 +551,7 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaX).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).EndInit();
             panel5.ResumeLayout(false);
+            panel6.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -581,6 +599,7 @@
         private Button button1;
         private ToolStripMenuItem ajudaToolStripMenuItem;
         private ToolStripMenuItem controlesToolStripMenuItem;
-
+        private Panel panel6;
+        private Button button2;
     }
 }

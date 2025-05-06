@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 
 namespace Objetos3D.Classes
 {
-    internal class Matriz4x4
+    public class Matriz4x4
     {
         private float[,] M = new float[4, 4];
 
         public Matriz4x4()
         {
             Identity();
+        }
+
+        public Matriz4x4(Matriz4x4 matriz)
+        {
+            this.M = matriz.M;
         }
 
         public void Identity()
@@ -70,9 +75,18 @@ namespace Objetos3D.Classes
 
         public static (float x, float y, float z) Transform((float x, float y, float z) v, Matriz4x4 m)
         {
-            float x = v.x * m.M[0, 0] + v.y * m.M[0, 1] + v.z * m.M[0, 2];
-            float y = v.x * m.M[1, 0] + v.y * m.M[1, 1] + v.z * m.M[1, 2];
-            float z = v.x * m.M[2, 0] + v.y * m.M[2, 1] + v.z * m.M[2, 2];
+            float x = v.x * m.M[0, 0] + v.y * m.M[0, 1] + v.z * m.M[0, 2] + m.M[0, 3];
+            float y = v.x * m.M[1, 0] + v.y * m.M[1, 1] + v.z * m.M[1, 2] + m.M[1, 3];
+            float z = v.x * m.M[2, 0] + v.y * m.M[2, 1] + v.z * m.M[2, 2] + m.M[2, 3];
+            float w = v.x * m.M[3, 0] + v.y * m.M[3, 1] + v.z * m.M[3, 2] + m.M[3, 3];
+
+            if (w != 0)
+            {
+                x /= w;
+                y /= w;
+                z /= w;
+            }
+
             return (x, y, z);
         }
 
@@ -88,5 +102,32 @@ namespace Objetos3D.Classes
                 }
             return r;
         }
+
+        public static Matriz4x4 ProjecaoPerspectiva(float d)
+        {
+            var m = new Matriz4x4();
+            m.M[2, 3] = -1f / d;  // Perspectiva no eixo Z
+            m.M[3, 3] = 0;
+            return m;
+        }
+
+        public static Matriz4x4 ProjecaoCavaleira()
+        {
+            var m = new Matriz4x4();
+            float angulo = (float)(45 * Math.PI / 180.0); // 45°
+            m.M[0, 2] = (float)(-Math.Cos(angulo));
+            m.M[1, 2] = (float)(-Math.Sin(angulo));
+            return m;
+        }
+
+        public static Matriz4x4 ProjecaoCabinet()
+        {
+            var m = new Matriz4x4();
+            float angulo = (float)(45 * Math.PI / 180.0); // 45°
+            m.M[0, 2] = (float)(-0.5 * Math.Cos(angulo));
+            m.M[1, 2] = (float)(-0.5 * Math.Sin(angulo));
+            return m;
+        }
+
     }
 }
