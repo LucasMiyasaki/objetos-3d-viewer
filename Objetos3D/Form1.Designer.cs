@@ -68,6 +68,7 @@
             button1 = new Button();
             panel6 = new Panel();
             button2 = new Button();
+            splitContainer1 = new SplitContainer();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
@@ -86,14 +87,19 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).BeginInit();
             panel5.SuspendLayout();
             panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
             // 
             pictureBox1.BackColor = Color.White;
-            pictureBox1.Location = new Point(12, 47);
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1116, 787);
+            pictureBox1.Size = new Size(1144, 759);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
@@ -160,7 +166,7 @@
             // 
             panel1.BackColor = Color.White;
             panel1.Controls.Add(label2);
-            panel1.Location = new Point(1146, 47);
+            panel1.Location = new Point(7, 3);
             panel1.Name = "panel1";
             panel1.Size = new Size(245, 49);
             panel1.TabIndex = 6;
@@ -185,7 +191,7 @@
             panel2.Controls.Add(label6);
             panel2.Controls.Add(label3);
             panel2.Controls.Add(tbTransX);
-            panel2.Location = new Point(1146, 102);
+            panel2.Location = new Point(7, 58);
             panel2.Name = "panel2";
             panel2.Size = new Size(245, 148);
             panel2.TabIndex = 7;
@@ -276,7 +282,7 @@
             panel3.Controls.Add(label9);
             panel3.Controls.Add(label10);
             panel3.Controls.Add(tbRotacaoX);
-            panel3.Location = new Point(1146, 256);
+            panel3.Location = new Point(7, 212);
             panel3.Name = "panel3";
             panel3.Size = new Size(245, 151);
             panel3.TabIndex = 11;
@@ -371,7 +377,7 @@
             panel4.Controls.Add(label13);
             panel4.Controls.Add(label14);
             panel4.Controls.Add(tbEscalaG);
-            panel4.Location = new Point(1146, 413);
+            panel4.Location = new Point(7, 369);
             panel4.Name = "panel4";
             panel4.Size = new Size(245, 221);
             panel4.TabIndex = 12;
@@ -478,7 +484,7 @@
             // 
             panel5.BackColor = Color.White;
             panel5.Controls.Add(button1);
-            panel5.Location = new Point(1146, 640);
+            panel5.Location = new Point(7, 596);
             panel5.Name = "panel5";
             panel5.Size = new Size(245, 60);
             panel5.TabIndex = 13;
@@ -497,7 +503,7 @@
             // 
             panel6.BackColor = Color.White;
             panel6.Controls.Add(button2);
-            panel6.Location = new Point(1146, 706);
+            panel6.Location = new Point(7, 662);
             panel6.Name = "panel6";
             panel6.Size = new Size(245, 60);
             panel6.TabIndex = 14;
@@ -512,19 +518,37 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // splitContainer1
+            // 
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.FixedPanel = FixedPanel.Panel2;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new Point(0, 28);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.Controls.Add(pictureBox1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(panel1);
+            splitContainer1.Panel2.Controls.Add(panel6);
+            splitContainer1.Panel2.Controls.Add(panel2);
+            splitContainer1.Panel2.Controls.Add(panel5);
+            splitContainer1.Panel2.Controls.Add(panel3);
+            splitContainer1.Panel2.Controls.Add(panel4);
+            splitContainer1.Size = new Size(1403, 759);
+            splitContainer1.SplitterDistance = 1144;
+            splitContainer1.TabIndex = 15;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1403, 830);
-            Controls.Add(panel6);
-            Controls.Add(panel5);
-            Controls.Add(panel4);
-            Controls.Add(panel3);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
-            Controls.Add(pictureBox1);
+            ClientSize = new Size(1403, 787);
+            Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
@@ -552,6 +576,10 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).EndInit();
             panel5.ResumeLayout(false);
             panel6.ResumeLayout(false);
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -601,5 +629,6 @@
         private ToolStripMenuItem controlesToolStripMenuItem;
         private Panel panel6;
         private Button button2;
+        private SplitContainer splitContainer1;
     }
 }

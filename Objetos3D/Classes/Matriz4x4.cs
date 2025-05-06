@@ -106,8 +106,13 @@ namespace Objetos3D.Classes
         public static Matriz4x4 ProjecaoPerspectiva(float d)
         {
             var m = new Matriz4x4();
-            m.M[2, 3] = -1f / d;  // Perspectiva no eixo Z
-            m.M[3, 3] = 0;
+
+            m.M[0, 0] = d;
+            m.M[1, 1] = d;
+            m.M[2, 2] = 0;
+            m.M[3, 2] = 1f;
+            m.M[3, 3] = d;
+
             return m;
         }
 
