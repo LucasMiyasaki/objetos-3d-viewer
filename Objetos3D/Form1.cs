@@ -106,48 +106,52 @@ namespace Objetos3D
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (arrastando)
+            if(objeto != null)
             {
-                int dx = e.X - posicaoMouseAnterior.X;
-                int dy = e.Y - posicaoMouseAnterior.Y;
-
-                deslocamentoX += dx;
-                deslocamentoY += dy;
-
-                tbTransX.Value = deslocamentoX;
-                tbTransY.Value = deslocamentoY;
-
-                posicaoMouseAnterior = e.Location;
-                desenhaObjeto();
-            }
-            else if (rotacionando)
-            {
-                if ((ModifierKeys & Keys.Control) == Keys.Control)
-                {
-                    int dx = e.X - posicaoMouseAnterior.X;
-
-                    objeto.AcumularRotacaoZ(dx);
-
-                    rotacaoZ = Clamp(rotacaoZ + dx, tbRotacaoZ.Minimum, tbRotacaoZ.Maximum);
-                    tbRotacaoZ.Value = rotacaoZ;
-                }
-                else
+                if (arrastando)
                 {
                     int dx = e.X - posicaoMouseAnterior.X;
                     int dy = e.Y - posicaoMouseAnterior.Y;
 
-                    objeto.AcumularRotacao(dx, dy);
+                    deslocamentoX += dx;
+                    deslocamentoY += dy;
 
-                    rotacaoX = Clamp(rotacaoX + dx, tbRotacaoX.Minimum, tbRotacaoX.Maximum);
-                    rotacaoY = Clamp(rotacaoY + dy, tbRotacaoY.Minimum, tbRotacaoY.Maximum);
+                    tbTransX.Value = deslocamentoX;
+                    tbTransY.Value = deslocamentoY;
 
-                    tbRotacaoX.Value = rotacaoX;
-                    tbRotacaoY.Value = rotacaoY;
+                    posicaoMouseAnterior = e.Location;
+                    desenhaObjeto();
                 }
+                else if (rotacionando)
+                {
+                    if ((ModifierKeys & Keys.Control) == Keys.Control)
+                    {
+                        int dx = e.X - posicaoMouseAnterior.X;
 
-                posicaoMouseAnterior = e.Location;
-                desenhaObjeto();
+                        objeto.AcumularRotacaoZ(dx);
+
+                        rotacaoZ = Clamp(rotacaoZ + dx, tbRotacaoZ.Minimum, tbRotacaoZ.Maximum);
+                        tbRotacaoZ.Value = rotacaoZ;
+                    }
+                    else
+                    {
+                        int dx = e.X - posicaoMouseAnterior.X;
+                        int dy = e.Y - posicaoMouseAnterior.Y;
+
+                        objeto.AcumularRotacao(dx, dy);
+
+                        rotacaoX = Clamp(rotacaoX + dx, tbRotacaoX.Minimum, tbRotacaoX.Maximum);
+                        rotacaoY = Clamp(rotacaoY + dy, tbRotacaoY.Minimum, tbRotacaoY.Maximum);
+
+                        tbRotacaoX.Value = rotacaoX;
+                        tbRotacaoY.Value = rotacaoY;
+                    }
+
+                    posicaoMouseAnterior = e.Location;
+                    desenhaObjeto();
+                }
             }
+            
         }
 
         private int Clamp(int v, int min, int max) => Math.Min(Math.Max(v, min), max);
@@ -161,40 +165,43 @@ namespace Objetos3D
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
         {
-            float fator = (e.Delta > 0) ? 1.1f : 0.9f;
-            int step = (e.Delta > 0) ? 1 : -1;
-
-            if (eixoEscalaAtivo == "X")
+            if(objeto != null)
             {
-                objeto.AcumularEscala(fator, 1f, 1f);
+                float fator = (e.Delta > 0) ? 1.1f : 0.9f;
+                int step = (e.Delta > 0) ? 1 : -1;
 
-                escXAc = Clamp(escXAc + step, tbEscalaX.Minimum, tbEscalaX.Maximum);
-                tbEscalaX.Value = escXAc;
+                if (eixoEscalaAtivo == "X")
+                {
+                    objeto.AcumularEscala(fator, 1f, 1f);
+
+                    escXAc = Clamp(escXAc + step, tbEscalaX.Minimum, tbEscalaX.Maximum);
+                    tbEscalaX.Value = escXAc;
+                }
+                else if (eixoEscalaAtivo == "Y")
+                {
+                    objeto.AcumularEscala(1f, fator, 1f);
+
+                    escYAc = Clamp(escYAc + step, tbEscalaY.Minimum, tbEscalaY.Maximum);
+                    tbEscalaY.Value = escYAc;
+                }
+                else if (eixoEscalaAtivo == "Z")
+                {
+                    objeto.AcumularEscala(1f, 1f, fator);
+
+                    escZAc = Clamp(escZAc + step, tbEscalaZ.Minimum, tbEscalaZ.Maximum);
+                    tbEscalaZ.Value = escZAc;
+                }
+                else
+                {
+                    // Escala uniforme se nenhuma tecla estiver pressionada
+                    objeto.AcumularEscala(fator, fator, fator);
+
+                    escGAc = Clamp(escGAc + step, tbEscalaG.Minimum, tbEscalaG.Maximum);
+                    tbEscalaG.Value = escGAc;
+                }
+
+                desenhaObjeto();
             }
-            else if (eixoEscalaAtivo == "Y")
-            {
-                objeto.AcumularEscala(1f, fator, 1f);
-
-                escYAc = Clamp(escYAc + step, tbEscalaY.Minimum, tbEscalaY.Maximum);
-                tbEscalaY.Value = escYAc;
-            }
-            else if (eixoEscalaAtivo == "Z")
-            {
-                objeto.AcumularEscala(1f, 1f, fator);
-
-                escZAc = Clamp(escZAc + step, tbEscalaZ.Minimum, tbEscalaZ.Maximum);
-                tbEscalaZ.Value = escZAc;
-            }
-            else
-            {
-                // Escala uniforme se nenhuma tecla estiver pressionada
-                objeto.AcumularEscala(fator, fator, fator);
-
-                escGAc = Clamp(escGAc + step, tbEscalaG.Minimum, tbEscalaG.Maximum);
-                tbEscalaG.Value = escGAc;
-            }
-
-            desenhaObjeto();
         }
 
         private void btn10x_Click(object sender, EventArgs e)

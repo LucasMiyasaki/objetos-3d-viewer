@@ -41,12 +41,14 @@
             pbCavaleira = new PictureBox();
             label7 = new Label();
             pbPerspectiva = new PictureBox();
+            numericUpDown1 = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)pbFrontal).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbTopo).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbLateral).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbCabinet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbCavaleira).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbPerspectiva).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
             // label2
@@ -179,11 +181,22 @@
             pbPerspectiva.TabIndex = 8;
             pbPerspectiva.TabStop = false;
             // 
+            // numericUpDown1
+            // 
+            numericUpDown1.Location = new Point(82, 808);
+            numericUpDown1.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            numericUpDown1.Minimum = new decimal(new int[] { 10000, 0, 0, int.MinValue });
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(150, 27);
+            numericUpDown1.TabIndex = 14;
+            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1021, 809);
+            ClientSize = new Size(1021, 871);
+            Controls.Add(numericUpDown1);
             Controls.Add(label5);
             Controls.Add(pbCabinet);
             Controls.Add(label6);
@@ -205,6 +218,7 @@
             ((System.ComponentModel.ISupportInitialize)pbCabinet).EndInit();
             ((System.ComponentModel.ISupportInitialize)pbCavaleira).EndInit();
             ((System.ComponentModel.ISupportInitialize)pbPerspectiva).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -224,5 +238,6 @@
         private PictureBox pbCavaleira;
         private Label label7;
         private PictureBox pbPerspectiva;
+        private NumericUpDown numericUpDown1;
     }
 }

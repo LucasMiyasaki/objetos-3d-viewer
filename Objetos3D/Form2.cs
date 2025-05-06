@@ -19,11 +19,10 @@ namespace Objetos3D
             InitializeComponent();
             this.objeto = objeto;
 
-            if(objeto != null )
+            if (objeto != null)
             {
                 Objeto3D topo = new Objeto3D(objeto);
                 Objeto3D lateral = new Objeto3D(objeto);
-                Objeto3D perspectiva = new Objeto3D(objeto);
                 Objeto3D cavaleira = new Objeto3D(objeto);
                 Objeto3D cabinet = new Objeto3D(objeto);
 
@@ -35,19 +34,21 @@ namespace Objetos3D
                 lateral.AcumularRotacao(-157, 0);
                 pbLateral.Image = lateral.desenhaObjeto(pbLateral.Width, pbLateral.Height, 0, 0);
 
-                perspectiva.AcumularEscala(1, 1, 1);
-                Matriz4x4 m = Matriz4x4.ProjecaoPerspectiva(100);
-                pbPerspectiva.Image = perspectiva.desenhaObjeto(pbPerspectiva.Width, pbPerspectiva.Height, 0, 0, m);
-
-                cavaleira.AcumularEscala(1, 1, 1);
-                m = Matriz4x4.ProjecaoCavaleira();
+                Matriz4x4 m = Matriz4x4.ProjecaoCavaleira();
                 pbCavaleira.Image = cavaleira.desenhaObjeto(pbCavaleira.Width, pbCavaleira.Height, 0, 0, m);
 
-                cabinet.AcumularEscala(1, 1, 1);
                 m = Matriz4x4.ProjecaoCabinet();
                 pbCabinet.Image = cabinet.desenhaObjeto(pbCabinet.Width, pbCabinet.Height, 0, 0, m);
 
             }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            Objeto3D perspectiva = new Objeto3D(objeto);
+
+            Matriz4x4 m = Matriz4x4.ProjecaoPerspectiva((float)numericUpDown1.Value);
+            pbPerspectiva.Image = perspectiva.desenhaObjeto(pbPerspectiva.Width, pbPerspectiva.Height, 0, 0, m);
         }
     }
 }
