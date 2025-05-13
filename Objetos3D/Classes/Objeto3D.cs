@@ -124,7 +124,7 @@ namespace Objetos3D.Classes
             return _frameBuffer;
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth,int pictureBoxHeight,Matriz4x4 m = null)
+        public Bitmap desenhaObjeto(int pictureBoxWidth,int pictureBoxHeight, bool removerFaces, Matriz4x4 m = null)
         {
             Bitmap bmp = GetFrameBuffer(pictureBoxWidth, pictureBoxHeight);
 
@@ -146,6 +146,8 @@ namespace Objetos3D.Classes
 
                 foreach (var face in faces)
                 {
+                    bool visivel = true;
+
                     var v1 = vertices[face.a - 1];
                     var v2 = vertices[face.b - 1];
                     var v3 = vertices[face.c - 1];
@@ -157,6 +159,14 @@ namespace Objetos3D.Classes
                     var t2 = Matriz4x4.Transform(v2, matrizFinal);
                     var t3 = Matriz4x4.Transform(v3, matrizFinal);
 
+                    if(removerFaces) {
+                        var normal = CalcularNormal(t1, t2, t3);
+
+                        var remocao = 0 * normal.x + 0 * normal.y + (-1) * normal.z;
+                        if (remocao >= 0)
+                            visivel = false;
+                    }
+
                     Point p1 = new((int)t1.x + centroX,
                                    (int)-t1.y + centroY);
                     Point p2 = new((int)t2.x + centroX,
@@ -164,9 +174,12 @@ namespace Objetos3D.Classes
                     Point p3 = new((int)t3.x + centroX,
                                    (int)-t3.y + centroY);
 
-                    DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
-                    DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
-                    DesenharLinhaBresenham(bmpData, p3.X, p3.Y, p1.X, p1.Y, Color.Black);
+                    if (visivel)
+                    {
+                        DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
+                        DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
+                        DesenharLinhaBresenham(bmpData, p3.X, p3.Y, p1.X, p1.Y, Color.Black);
+                    }
                 }
             }
             finally
@@ -256,6 +269,21 @@ namespace Objetos3D.Classes
         {
             var translacao = Matriz4x4.Translacao(x, y, z);
             matrizAcumulada = translacao * matrizAcumulada;
+        }
+
+        private (float x, float y, float z) CalcularNormal((float x, float y, float z)v1, (float x, float y, float z)v2, (float x, float y, float z)v3)
+        {
+            var vet1 = (x: v1.x - v2.x, y: v1.y - v2.y, z: v1.z - v2.z);
+            var vet2 = (x: v1.x - v3.x, y: v1.y - v3.y, z: v1.z - v3.z);
+
+            var n = (
+                x: vet1.y * vet2.z - vet1.z * vet2.y,
+                y: vet1.z * vet2.x - vet1.x * vet2.z,
+                z: vet1.x * vet2.y - vet1.y * vet2.x);
+
+            float comprimento = MathF.Sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
+
+            return (n.x / comprimento, n.y / comprimento, n.z / comprimento);
         }
     }
 }
