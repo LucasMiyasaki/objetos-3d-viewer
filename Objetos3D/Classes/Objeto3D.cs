@@ -17,8 +17,10 @@ namespace Objetos3D.Classes
     {
         private List<(float x, float y, float z)> listaVerticesOriginais;
         private List<(int a, int b, int c)> listaFaces;
-        private Matriz4x4 matrizRotacao = new Matriz4x4();
-        private Matriz4x4 matrizEscala = new Matriz4x4();
+        private Matriz4x4 matrizAcumulada = new Matriz4x4();
+
+        private Bitmap _frameBuffer;
+        private readonly object _frameLock = new();
 
         public Objeto3D()
         {
@@ -31,8 +33,7 @@ namespace Objetos3D.Classes
             this.listaVerticesOriginais = objeto.listaVerticesOriginais.ToList();
             this.listaFaces = objeto.listaFaces.ToList();
 
-            this.matrizRotacao = new Matriz4x4(objeto.matrizRotacao);
-            this.matrizEscala = new Matriz4x4(objeto.matrizEscala);
+            this.matrizAcumulada = new Matriz4x4(objeto.matrizAcumulada);
         }
 
 
@@ -110,79 +111,81 @@ namespace Objetos3D.Classes
             }
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, int deslX, int deslY, Matriz4x4 m = null)
+        private Bitmap GetFrameBuffer(int width, int height)
         {
-            // Cria o bitmap com formato 24bpp para acesso direto (3 bytes por pixel)
-            Bitmap bmp = new Bitmap(pictureBoxWidth, pictureBoxHeight, PixelFormat.Format24bppRgb);
-
-            // Bloqueia o bitmap para acesso direto à memória
-            Rectangle retangulo = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData bmpData = bmp.LockBits(retangulo, ImageLockMode.ReadWrite, bmp.PixelFormat);
-
-            // Ponteiro para o início dos dados
-            IntPtr ptrInicio = bmpData.Scan0;
-            int stride = bmpData.Stride;
-            int bytesPorPixel = 3; // pois usamos Format24bppRgb
-
-            // Preenche a tela de branco (podemos fazer de forma simples com um for)
-            // n total de bytes = stride * altura
-            int totalBytes = Math.Abs(stride) * bmp.Height;
-            unsafe
+            if (_frameBuffer == null ||
+                _frameBuffer.Width != width ||
+                _frameBuffer.Height != height)
             {
-                byte* p = (byte*)ptrInicio;
-                for (int i = 0; i < totalBytes; i++)
+                _frameBuffer?.Dispose();                                 // libera o antigo
+                _frameBuffer = new Bitmap(width, height,                 // cria 24 bpp
+                                          PixelFormat.Format24bppRgb);
+            }
+            return _frameBuffer;
+        }
+
+        public Bitmap desenhaObjeto(int pictureBoxWidth,int pictureBoxHeight, bool removerFaces, Matriz4x4 m = null)
+        {
+            Bitmap bmp = GetFrameBuffer(pictureBoxWidth, pictureBoxHeight);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+                g.Clear(Color.White);
+
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData bmpData = bmp.LockBits(rect,
+                                              ImageLockMode.ReadWrite,
+                                              bmp.PixelFormat);
+
+            try
+            {
+                int centroX = pictureBoxWidth / 2;
+                int centroY = pictureBoxHeight / 2;
+
+                var vertices = GetListaVerticeOriginais();
+                var faces = GetListaFaces();
+
+                foreach (var face in faces)
                 {
-                    // Branco = 255 em cada componente
-                    p[i] = 255;
+                    bool visivel = true;
+
+                    var v1 = vertices[face.a - 1];
+                    var v2 = vertices[face.b - 1];
+                    var v3 = vertices[face.c - 1];
+
+                    var matrizFinal = matrizAcumulada;
+                    if (m != null) matrizFinal *= m;
+
+                    var t1 = Matriz4x4.Transform(v1, matrizFinal);
+                    var t2 = Matriz4x4.Transform(v2, matrizFinal);
+                    var t3 = Matriz4x4.Transform(v3, matrizFinal);
+
+                    if(removerFaces) {
+                        var normal = CalcularNormal(t1, t2, t3);
+
+                        var remocao = 0 * normal.x + 0 * normal.y + (-1) * normal.z;
+                        if (remocao >= 0)
+                            visivel = false;
+                    }
+
+                    Point p1 = new((int)t1.x + centroX,
+                                   (int)-t1.y + centroY);
+                    Point p2 = new((int)t2.x + centroX,
+                                   (int)-t2.y + centroY);
+                    Point p3 = new((int)t3.x + centroX,
+                                   (int)-t3.y + centroY);
+
+                    if (visivel)
+                    {
+                        DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
+                        DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
+                        DesenharLinhaBresenham(bmpData, p3.X, p3.Y, p1.X, p1.Y, Color.Black);
+                    }
                 }
             }
-
-            // Coordenadas do centro
-            int centroX = pictureBoxWidth / 2;
-            int centroY = pictureBoxHeight / 2;
-
-            // A lista de vértices e faces originais
-            var vertices = this.GetListaVerticeOriginais();
-            var faces = this.GetListaFaces();
-
-            // Para cada face, desenha as três arestas
-            foreach (var face in faces)
+            finally
             {
-                var v1 = vertices[face.a - 1];
-                var v2 = vertices[face.b - 1];
-                var v3 = vertices[face.c - 1];
-
-                // Aplica a rotação e escala
-                var matrizFinal = matrizRotacao * matrizEscala;
-                if (m != null)
-                    matrizFinal *= m;
-                var t1 = Matriz4x4.Transform(v1, matrizFinal);
-                var t2 = Matriz4x4.Transform(v2, matrizFinal);
-                var t3 = Matriz4x4.Transform(v3, matrizFinal);
-
-                // Converte para coordenadas de tela
-                Point p1 = new Point(
-                    (int)(t1.x) + centroX + deslX,
-                    (int)(-t1.y) + centroY + deslY);
-
-                Point p2 = new Point(
-                    (int)(t2.x) + centroX + deslX,
-                    (int)(-t2.y) + centroY + deslY);
-
-                Point p3 = new Point(
-                    (int)(t3.x) + centroX + deslX,
-                    (int)(-t3.y) + centroY + deslY);
-
-                // Desenha as linhas em memória (preto)
-                DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
-                DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
-                DesenharLinhaBresenham(bmpData, p3.X, p3.Y, p1.X, p1.Y, Color.Black);
+                bmp.UnlockBits(bmpData);
             }
-
-            // Libera o acesso ao bitmap
-            bmp.UnlockBits(bmpData);
-
-            // Retorna o bitmap resultante
             return bmp;
         }
 
@@ -243,7 +246,7 @@ namespace Objetos3D.Classes
             var rotX = Matriz4x4.RotationX(angX);
             var rotY = Matriz4x4.RotationY(angY);
 
-            matrizRotacao = rotY * rotX * matrizRotacao;
+            matrizAcumulada = rotY * rotX * matrizAcumulada;
         }
 
         public void AcumularRotacaoZ(float deltaX)
@@ -252,14 +255,35 @@ namespace Objetos3D.Classes
 
             var rotZ = Matriz4x4.RotationZ(angZ);
 
-            matrizRotacao = rotZ * matrizRotacao;
+            matrizAcumulada = rotZ * matrizAcumulada;
         }
 
 
         public void AcumularEscala(float escX, float escY, float escZ)
         {
             var escalaNova = Matriz4x4.Escala(escX, escY, escZ);
-            matrizEscala = escalaNova * matrizEscala;
+            matrizAcumulada = escalaNova * matrizAcumulada;
+        }
+
+        public void AcumularTranslacao(float x, float y, float z)
+        {
+            var translacao = Matriz4x4.Translacao(x, y, z);
+            matrizAcumulada = translacao * matrizAcumulada;
+        }
+
+        private (float x, float y, float z) CalcularNormal((float x, float y, float z)v1, (float x, float y, float z)v2, (float x, float y, float z)v3)
+        {
+            var vet1 = (x: v1.x - v2.x, y: v1.y - v2.y, z: v1.z - v2.z);
+            var vet2 = (x: v1.x - v3.x, y: v1.y - v3.y, z: v1.z - v3.z);
+
+            var n = (
+                x: vet1.y * vet2.z - vet1.z * vet2.y,
+                y: vet1.z * vet2.x - vet1.x * vet2.z,
+                z: vet1.x * vet2.y - vet1.y * vet2.x);
+
+            float comprimento = MathF.Sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
+
+            return (n.x / comprimento, n.y / comprimento, n.z / comprimento);
         }
     }
 }

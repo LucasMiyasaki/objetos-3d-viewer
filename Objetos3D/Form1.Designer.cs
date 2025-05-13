@@ -29,15 +29,16 @@
         private void InitializeComponent()
         {
             pictureBox1 = new PictureBox();
-            btn10x = new Button();
-            btn100x = new Button();
             menuStrip1 = new MenuStrip();
             arquivoToolStripMenuItem = new ToolStripMenuItem();
             abrirArquivoToolStripMenuItem = new ToolStripMenuItem();
             ajudaToolStripMenuItem = new ToolStripMenuItem();
             controlesToolStripMenuItem = new ToolStripMenuItem();
-            panel1 = new Panel();
-            label2 = new Label();
+            splitContainer1 = new SplitContainer();
+            tabControl = new TabControl();
+            tabPage1 = new TabPage();
+            panel6 = new Panel();
+            button2 = new Button();
             panel2 = new Panel();
             label5 = new Label();
             tbTransZ = new TrackBar();
@@ -46,6 +47,8 @@
             label6 = new Label();
             label3 = new Label();
             tbTransX = new TrackBar();
+            panel5 = new Panel();
+            button1 = new Button();
             panel3 = new Panel();
             label7 = new Label();
             tbRotacaoZ = new TrackBar();
@@ -59,23 +62,29 @@
             tbEscalaZ = new TrackBar();
             label11 = new Label();
             tbEscalaY = new TrackBar();
+            btn100x = new Button();
+            btn10x = new Button();
             label12 = new Label();
             tbEscalaX = new TrackBar();
             label13 = new Label();
             label14 = new Label();
             tbEscalaG = new TrackBar();
-            panel5 = new Panel();
-            button1 = new Button();
-            panel6 = new Panel();
-            button2 = new Button();
-            splitContainer1 = new SplitContainer();
+            tabPage2 = new TabPage();
+            checkBox1 = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
-            panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            tabControl.SuspendLayout();
+            tabPage1.SuspendLayout();
+            panel6.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tbTransZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbTransY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbTransX).BeginInit();
+            panel5.SuspendLayout();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tbRotacaoZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbRotacaoY).BeginInit();
@@ -85,12 +94,7 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).BeginInit();
-            panel5.SuspendLayout();
-            panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
@@ -103,26 +107,6 @@
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
-            // 
-            // btn10x
-            // 
-            btn10x.Location = new Point(13, 50);
-            btn10x.Name = "btn10x";
-            btn10x.Size = new Size(49, 29);
-            btn10x.TabIndex = 3;
-            btn10x.Text = "10x";
-            btn10x.UseVisualStyleBackColor = true;
-            btn10x.Click += btn10x_Click;
-            // 
-            // btn100x
-            // 
-            btn100x.Location = new Point(68, 50);
-            btn100x.Name = "btn100x";
-            btn100x.Size = new Size(49, 29);
-            btn100x.TabIndex = 4;
-            btn100x.Text = "100x";
-            btn100x.UseVisualStyleBackColor = true;
-            btn100x.Click += btn100x_Click;
             // 
             // menuStrip1
             // 
@@ -162,24 +146,68 @@
             controlesToolStripMenuItem.Text = "Controles (Mouse)";
             controlesToolStripMenuItem.Click += controlesToolStripMenuItem_Click;
             // 
-            // panel1
+            // splitContainer1
             // 
-            panel1.BackColor = Color.White;
-            panel1.Controls.Add(label2);
-            panel1.Location = new Point(7, 3);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(245, 49);
-            panel1.TabIndex = 6;
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.FixedPanel = FixedPanel.Panel2;
+            splitContainer1.IsSplitterFixed = true;
+            splitContainer1.Location = new Point(0, 28);
+            splitContainer1.Name = "splitContainer1";
             // 
-            // label2
+            // splitContainer1.Panel1
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 11F);
-            label2.Location = new Point(50, 11);
-            label2.Name = "label2";
-            label2.Size = new Size(144, 25);
-            label2.TabIndex = 0;
-            label2.Text = "Transformações";
+            splitContainer1.Panel1.Controls.Add(pictureBox1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(tabControl);
+            splitContainer1.Size = new Size(1403, 759);
+            splitContainer1.SplitterDistance = 1144;
+            splitContainer1.TabIndex = 15;
+            // 
+            // tabControl
+            // 
+            tabControl.Controls.Add(tabPage1);
+            tabControl.Controls.Add(tabPage2);
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Location = new Point(0, 0);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new Size(255, 759);
+            tabControl.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(panel6);
+            tabPage1.Controls.Add(panel2);
+            tabPage1.Controls.Add(panel5);
+            tabPage1.Controls.Add(panel3);
+            tabPage1.Controls.Add(panel4);
+            tabPage1.Location = new Point(4, 29);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(247, 726);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Transformações";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // panel6
+            // 
+            panel6.BackColor = Color.White;
+            panel6.Controls.Add(button2);
+            panel6.Location = new Point(0, 605);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(245, 60);
+            panel6.TabIndex = 19;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(13, 15);
+            button2.Name = "button2";
+            button2.Size = new Size(218, 29);
+            button2.TabIndex = 0;
+            button2.Text = "Projeções";
+            button2.UseVisualStyleBackColor = true;
             // 
             // panel2
             // 
@@ -191,10 +219,10 @@
             panel2.Controls.Add(label6);
             panel2.Controls.Add(label3);
             panel2.Controls.Add(tbTransX);
-            panel2.Location = new Point(7, 58);
+            panel2.Location = new Point(0, 1);
             panel2.Name = "panel2";
             panel2.Size = new Size(245, 148);
-            panel2.TabIndex = 7;
+            panel2.TabIndex = 15;
             // 
             // label5
             // 
@@ -216,7 +244,6 @@
             tbTransZ.Size = new Size(199, 34);
             tbTransZ.TabIndex = 9;
             tbTransZ.TickStyle = TickStyle.None;
-            tbTransZ.Scroll += tbTransZ_Scroll;
             // 
             // label4
             // 
@@ -238,7 +265,6 @@
             tbTransY.Size = new Size(199, 34);
             tbTransY.TabIndex = 7;
             tbTransY.TickStyle = TickStyle.None;
-            tbTransY.Scroll += tbTransY_Scroll;
             // 
             // label6
             // 
@@ -270,7 +296,24 @@
             tbTransX.Size = new Size(199, 34);
             tbTransX.TabIndex = 0;
             tbTransX.TickStyle = TickStyle.None;
-            tbTransX.Scroll += tbTransX_Scroll;
+            // 
+            // panel5
+            // 
+            panel5.BackColor = Color.White;
+            panel5.Controls.Add(button1);
+            panel5.Location = new Point(0, 539);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(245, 60);
+            panel5.TabIndex = 18;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(13, 15);
+            button1.Name = "button1";
+            button1.Size = new Size(218, 29);
+            button1.TabIndex = 0;
+            button1.Text = "Reiniciar Transformações";
+            button1.UseVisualStyleBackColor = true;
             // 
             // panel3
             // 
@@ -282,10 +325,10 @@
             panel3.Controls.Add(label9);
             panel3.Controls.Add(label10);
             panel3.Controls.Add(tbRotacaoX);
-            panel3.Location = new Point(7, 212);
+            panel3.Location = new Point(0, 155);
             panel3.Name = "panel3";
             panel3.Size = new Size(245, 151);
-            panel3.TabIndex = 11;
+            panel3.TabIndex = 16;
             // 
             // label7
             // 
@@ -307,7 +350,6 @@
             tbRotacaoZ.Size = new Size(199, 34);
             tbRotacaoZ.TabIndex = 9;
             tbRotacaoZ.TickStyle = TickStyle.None;
-            tbRotacaoZ.Scroll += tbRotacaoZ_Scroll;
             // 
             // label8
             // 
@@ -329,7 +371,6 @@
             tbRotacaoY.Size = new Size(199, 34);
             tbRotacaoY.TabIndex = 7;
             tbRotacaoY.TickStyle = TickStyle.None;
-            tbRotacaoY.Scroll += tbRotacaoY_Scroll;
             // 
             // label9
             // 
@@ -361,7 +402,6 @@
             tbRotacaoX.Size = new Size(199, 34);
             tbRotacaoX.TabIndex = 0;
             tbRotacaoX.TickStyle = TickStyle.None;
-            tbRotacaoX.Scroll += tbRotacaoX_Scroll;
             // 
             // panel4
             // 
@@ -377,10 +417,10 @@
             panel4.Controls.Add(label13);
             panel4.Controls.Add(label14);
             panel4.Controls.Add(tbEscalaG);
-            panel4.Location = new Point(7, 369);
+            panel4.Location = new Point(0, 312);
             panel4.Name = "panel4";
             panel4.Size = new Size(245, 221);
-            panel4.TabIndex = 12;
+            panel4.TabIndex = 17;
             // 
             // label15
             // 
@@ -402,7 +442,6 @@
             tbEscalaZ.Size = new Size(199, 34);
             tbEscalaZ.TabIndex = 11;
             tbEscalaZ.TickStyle = TickStyle.None;
-            tbEscalaZ.Scroll += tbEscalaZ_Scroll;
             // 
             // label11
             // 
@@ -424,7 +463,24 @@
             tbEscalaY.Size = new Size(199, 34);
             tbEscalaY.TabIndex = 9;
             tbEscalaY.TickStyle = TickStyle.None;
-            tbEscalaY.Scroll += tbEscalaY_Scroll;
+            // 
+            // btn100x
+            // 
+            btn100x.Location = new Point(68, 50);
+            btn100x.Name = "btn100x";
+            btn100x.Size = new Size(49, 29);
+            btn100x.TabIndex = 4;
+            btn100x.Text = "100x";
+            btn100x.UseVisualStyleBackColor = true;
+            // 
+            // btn10x
+            // 
+            btn10x.Location = new Point(13, 50);
+            btn10x.Name = "btn10x";
+            btn10x.Size = new Size(49, 29);
+            btn10x.TabIndex = 3;
+            btn10x.Text = "10x";
+            btn10x.UseVisualStyleBackColor = true;
             // 
             // label12
             // 
@@ -446,7 +502,6 @@
             tbEscalaX.Size = new Size(199, 34);
             tbEscalaX.TabIndex = 7;
             tbEscalaX.TickStyle = TickStyle.None;
-            tbEscalaX.Scroll += tbEscalaX_Scroll;
             // 
             // label13
             // 
@@ -478,69 +533,28 @@
             tbEscalaG.Size = new Size(199, 34);
             tbEscalaG.TabIndex = 0;
             tbEscalaG.TickStyle = TickStyle.None;
-            tbEscalaG.Scroll += tbEscalaG_Scroll;
             // 
-            // panel5
+            // tabPage2
             // 
-            panel5.BackColor = Color.White;
-            panel5.Controls.Add(button1);
-            panel5.Location = new Point(7, 596);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(245, 60);
-            panel5.TabIndex = 13;
+            tabPage2.Controls.Add(checkBox1);
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(247, 726);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Faces";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // checkBox1
             // 
-            button1.Location = new Point(13, 15);
-            button1.Name = "button1";
-            button1.Size = new Size(218, 29);
-            button1.TabIndex = 0;
-            button1.Text = "Reiniciar Transformações";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
-            // panel6
-            // 
-            panel6.BackColor = Color.White;
-            panel6.Controls.Add(button2);
-            panel6.Location = new Point(7, 662);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(245, 60);
-            panel6.TabIndex = 14;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(13, 15);
-            button2.Name = "button2";
-            button2.Size = new Size(218, 29);
-            button2.TabIndex = 0;
-            button2.Text = "Projeções";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
-            // 
-            // splitContainer1
-            // 
-            splitContainer1.Dock = DockStyle.Fill;
-            splitContainer1.FixedPanel = FixedPanel.Panel2;
-            splitContainer1.IsSplitterFixed = true;
-            splitContainer1.Location = new Point(0, 28);
-            splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            splitContainer1.Panel1.Controls.Add(pictureBox1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            splitContainer1.Panel2.Controls.Add(panel1);
-            splitContainer1.Panel2.Controls.Add(panel6);
-            splitContainer1.Panel2.Controls.Add(panel2);
-            splitContainer1.Panel2.Controls.Add(panel5);
-            splitContainer1.Panel2.Controls.Add(panel3);
-            splitContainer1.Panel2.Controls.Add(panel4);
-            splitContainer1.Size = new Size(1403, 759);
-            splitContainer1.SplitterDistance = 1144;
-            splitContainer1.TabIndex = 15;
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(13, 13);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(182, 24);
+            checkBox1.TabIndex = 0;
+            checkBox1.Text = "Remover Faces Ocultas";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // Form1
             // 
@@ -556,13 +570,19 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            tabControl.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            panel6.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tbTransZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbTransY).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbTransX).EndInit();
+            panel5.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tbRotacaoZ).EndInit();
@@ -574,12 +594,8 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaY).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaX).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).EndInit();
-            panel5.ResumeLayout(false);
-            panel6.ResumeLayout(false);
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -588,23 +604,28 @@
 
         private PictureBox pictureBox1;
         private Label label1;
-        private Button btn10x;
-        private Button btn100x;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem arquivoToolStripMenuItem;
         private ToolStripMenuItem abrirArquivoToolStripMenuItem;
-        private Panel panel1;
-        private Label label2;
+        private TrackBar trackBar2;
+        private TrackBar trackBar1;
+        private ToolStripMenuItem ajudaToolStripMenuItem;
+        private ToolStripMenuItem controlesToolStripMenuItem;
+        private SplitContainer splitContainer1;
+        private TabControl tabControl;
+        private TabPage tabPage1;
+        private Panel panel6;
+        private Button button2;
         private Panel panel2;
-        private TrackBar tbTransX;
-        private Label label3;
         private Label label5;
         private TrackBar tbTransZ;
-        private TrackBar trackBar2;
         private Label label4;
         private TrackBar tbTransY;
-        private TrackBar trackBar1;
         private Label label6;
+        private Label label3;
+        private TrackBar tbTransX;
+        private Panel panel5;
+        private Button button1;
         private Panel panel3;
         private Label label7;
         private TrackBar tbRotacaoZ;
@@ -618,17 +639,14 @@
         private TrackBar tbEscalaZ;
         private Label label11;
         private TrackBar tbEscalaY;
+        private Button btn100x;
+        private Button btn10x;
         private Label label12;
         private TrackBar tbEscalaX;
         private Label label13;
         private Label label14;
         private TrackBar tbEscalaG;
-        private Panel panel5;
-        private Button button1;
-        private ToolStripMenuItem ajudaToolStripMenuItem;
-        private ToolStripMenuItem controlesToolStripMenuItem;
-        private Panel panel6;
-        private Button button2;
-        private SplitContainer splitContainer1;
+        private TabPage tabPage2;
+        private CheckBox checkBox1;
     }
 }
