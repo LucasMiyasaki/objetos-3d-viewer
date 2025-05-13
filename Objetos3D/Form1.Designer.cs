@@ -472,6 +472,7 @@
             btn100x.TabIndex = 4;
             btn100x.Text = "100x";
             btn100x.UseVisualStyleBackColor = true;
+            btn100x.Click += btn100x_Click;
             // 
             // btn10x
             // 
@@ -481,6 +482,7 @@
             btn10x.TabIndex = 3;
             btn10x.Text = "10x";
             btn10x.UseVisualStyleBackColor = true;
+            btn10x.Click += btn10x_Click_1;
             // 
             // label12
             // 

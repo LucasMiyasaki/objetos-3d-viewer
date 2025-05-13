@@ -208,7 +208,7 @@ namespace Objetos3D
             }
         }
 
-        private void btn10x_Click(object sender, EventArgs e)
+        private void btn10x_Click_1(object sender, EventArgs e)
         {
             // 1. Avança o TrackBar global a quantidade de passos que equivale a ×10
             escGAc = Clamp(escGAc + STEPS_10X, tbEscalaG.Minimum, tbEscalaG.Maximum);
