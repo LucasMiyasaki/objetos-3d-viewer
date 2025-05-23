@@ -146,12 +146,10 @@ namespace Objetos3D.Classes
 
             if (scanLine)
             {
-                for (int y = 0; y < pictureBoxHeight; y++)
+                for (int x = 0; x < pictureBoxWidth; x++)
                 {
-                    for (int x = 0; x < pictureBoxWidth; x++)
-                    {
-                        z_buffer[x, y] = int.MinValue;
-                    }
+                    Span<int> row = MemoryMarshal.CreateSpan(ref z_buffer[x, 0], pictureBoxHeight);
+                    row.Fill(-999);
                 }
             }
 
