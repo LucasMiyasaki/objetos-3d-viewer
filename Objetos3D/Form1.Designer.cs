@@ -71,6 +71,7 @@
             tbEscalaG = new TrackBar();
             tabPage2 = new TabPage();
             checkBox1 = new CheckBox();
+            checkBox2 = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -549,6 +550,7 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBox2);
             tabPage2.Controls.Add(checkBox1);
             tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
@@ -568,6 +570,17 @@
             checkBox1.Text = "Remover Faces Ocultas";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
+            // checkBox2
+            // 
+            checkBox2.AutoSize = true;
+            checkBox2.Location = new Point(13, 43);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(89, 24);
+            checkBox2.TabIndex = 1;
+            checkBox2.Text = "ScanLine";
+            checkBox2.UseVisualStyleBackColor = true;
+            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
             // 
             // Form1
             // 
@@ -661,5 +674,6 @@
         private TrackBar tbEscalaG;
         private TabPage tabPage2;
         private CheckBox checkBox1;
+        private CheckBox checkBox2;
     }
 }

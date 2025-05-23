@@ -39,6 +39,7 @@ namespace Objetos3D
 
         //faces
         private bool removerFaces = false;
+        private bool scanLine = false;
 
         public Form1()
         {
@@ -89,7 +90,7 @@ namespace Objetos3D
 
         private void desenhaObjeto()
         {
-            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces);
+            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces, scanLine);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -387,6 +388,12 @@ namespace Objetos3D
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             removerFaces = checkBox1.Checked;
+            desenhaObjeto();
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            scanLine = checkBox2.Checked;
             desenhaObjeto();
         }
     }

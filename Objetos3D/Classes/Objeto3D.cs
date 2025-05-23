@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 namespace Objetos3D.Classes
 {
@@ -35,7 +36,12 @@ namespace Objetos3D.Classes
 
             this.matrizAcumulada = new Matriz4x4(objeto.matrizAcumulada);
         }
-
+        public class Poligono
+        {
+            public List<int> X { get; set; } = new List<int>();
+            public List<int> Y { get; set; } = new List<int>();
+            public List<int> Z { get; set; } = new List<int>();
+        }
 
         public void AddVertice(float x, float y, float z)
         {
@@ -124,7 +130,7 @@ namespace Objetos3D.Classes
             return _frameBuffer;
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth,int pictureBoxHeight, bool removerFaces, Matriz4x4 m = null)
+        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, bool removerFaces, bool scanLine, Matriz4x4 m = null)
         {
             Bitmap bmp = GetFrameBuffer(pictureBoxWidth, pictureBoxHeight);
 
@@ -133,8 +139,21 @@ namespace Objetos3D.Classes
 
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect,
-                                              ImageLockMode.ReadWrite,
-                                              bmp.PixelFormat);
+                                            ImageLockMode.ReadWrite,
+                                            bmp.PixelFormat);
+
+            int[,] z_buffer = new int[pictureBoxWidth, pictureBoxHeight];
+
+            if (scanLine)
+            {
+                for (int y = 0; y < pictureBoxHeight; y++)
+                {
+                    for (int x = 0; x < pictureBoxWidth; x++)
+                    {
+                        z_buffer[x, y] = int.MinValue;
+                    }
+                }
+            }
 
             try
             {
@@ -159,9 +178,9 @@ namespace Objetos3D.Classes
                     var t2 = Matriz4x4.Transform(v2, matrizFinal);
                     var t3 = Matriz4x4.Transform(v3, matrizFinal);
 
-                    if(removerFaces) {
+                    if (removerFaces)
+                    {
                         var normal = CalcularNormal(t1, t2, t3);
-
                         var remocao = 0 * normal.x + 0 * normal.y + (-1) * normal.z;
                         if (remocao >= 0)
                             visivel = false;
@@ -176,9 +195,19 @@ namespace Objetos3D.Classes
 
                     if (visivel)
                     {
-                        DesenharLinhaBresenham(bmpData, p1.X, p1.Y, p2.X, p2.Y, Color.Black);
-                        DesenharLinhaBresenham(bmpData, p2.X, p2.Y, p3.X, p3.Y, Color.Black);
-                        DesenharLinhaBresenham(bmpData, p3.X, p3.Y, p1.X, p1.Y, Color.Black);
+                        DesenharLinhaBresenham(bmpData, p1, p2, (int)t1.z, (int)t2.z, Color.Black, scanLine, z_buffer);
+                        DesenharLinhaBresenham(bmpData, p2, p3, (int)t2.z, (int)t3.z, Color.Black, scanLine, z_buffer);
+                        DesenharLinhaBresenham(bmpData, p3, p1, (int)t3.z, (int)t1.z, Color.Black, scanLine, z_buffer);
+                    }
+
+                    if (scanLine && visivel)
+                    {
+                        Poligono poligono = new Poligono();
+                        poligono.X.AddRange(new[] { p1.X, p2.X, p3.X });
+                        poligono.Y.AddRange(new[] { p1.Y, p2.Y, p3.Y });
+                        poligono.Z.AddRange(new[] { (int)t1.z, (int)t2.z, (int)t3.z });
+
+                        ScanLineFill(poligono, Color.Gray, bmpData, z_buffer);
                     }
                 }
             }
@@ -189,39 +218,45 @@ namespace Objetos3D.Classes
             return bmp;
         }
 
-        private unsafe void DesenharLinhaBresenham(BitmapData bmpData, int x0, int y0, int x1, int y1, Color cor)
+        private unsafe void DesenharLinhaBresenham(BitmapData bmpData, Point p1, Point p2, int z0, int z1, Color cor, bool flagDoScanLine, int[,] z_buffer)
         {
-            int bytesPorPixel = 3; // Format24bppRgb
-            int stride = bmpData.Stride;
+            int x0 = p1.X;
+            int y0 = p1.Y;
+            int x1 = p2.X;
+            int y1 = p2.Y;
 
-            // Função local que pinta 1 pixel (x,y) em cor "cor"
-            void SetPixel(int x, int y)
-            {
-                // Certifique-se de que (x,y) esteja dentro do bitmap
-                if (x < 0 || x >= bmpData.Width || y < 0 || y >= bmpData.Height)
-                    return;
-
-                // Ponteiro para o início da linha
-                byte* linha = (byte*)bmpData.Scan0 + (y * stride);
-                // Posição do pixel em X
-                int pos = x * bytesPorPixel;
-
-                // 24bpp => B, G, R
-                linha[pos + 0] = cor.B;  // Blue
-                linha[pos + 1] = cor.G;  // Green
-                linha[pos + 2] = cor.R;  // Red
-            }
-
-            // Algoritmo de Bresenham
             int dx = Math.Abs(x1 - x0);
             int sx = x0 < x1 ? 1 : -1;
             int dy = -Math.Abs(y1 - y0);
             int sy = y0 < y1 ? 1 : -1;
             int err = dx + dy;
 
+            int steps = Math.Max(dx, Math.Abs(dy));
+            float currentZ = z0;
+            float zStep = steps > 0 ? (float)(z1 - z0) / steps : 0f;
+
             while (true)
             {
-                SetPixel(x0, y0);
+                if (flagDoScanLine)
+                {
+                    if (x0 >= 0 && x0 < z_buffer.GetLength(0) && y0 >= 0 && y0 < z_buffer.GetLength(1))
+                    {
+                        if (currentZ > z_buffer[x0, y0])
+                        {
+                            SetPixel(x0, y0, bmpData, cor);
+                            z_buffer[x0, y0] = (int)currentZ;
+                        }
+                    }
+                    else
+                    {
+                        SetPixel(x0, y0, bmpData, cor);
+                    }
+                }
+                else
+                {
+                    SetPixel(x0, y0, bmpData, cor);
+                }
+
                 if (x0 == x1 && y0 == y1) break;
                 int e2 = 2 * err;
                 if (e2 >= dy)
@@ -234,9 +269,99 @@ namespace Objetos3D.Classes
                     err += dx;
                     y0 += sy;
                 }
+                currentZ += zStep;
             }
         }
 
+        private void ScanLineFill(Poligono pol, Color cor,
+                                BitmapData bmpData, int[,] z_buffer)
+        {
+            if (pol.X.Count < 3) return;
+
+            int minY = pol.Y.Min();
+            int maxY = pol.Y.Max();
+
+            minY = Math.Max(minY, 0);
+            maxY = Math.Min(maxY, z_buffer.GetLength(1) - 1);
+
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                var inters = new List<(int x, float z)>();
+
+                for (int i = 0; i < pol.X.Count; i++)
+                {
+                    int j = (i + 1) % pol.X.Count;
+
+                    int x_i = pol.X[i]; int y_i = pol.Y[i]; float z_i = pol.Z[i];
+                    int x_j = pol.X[j]; int y_j = pol.Y[j]; float z_j = pol.Z[j];
+
+                    if ((y_i <= y && y_j > y) || (y_j <= y && y_i > y)) { 
+                        if (y_j - y_i == 0) continue;
+
+                        float t = (float)(y - y_i) / (y_j - y_i);
+                        int x = x_i + (int)((x_j - x_i) * t);
+                        float z_at_intersection = z_i + (z_j - z_i) * t;
+                        inters.Add((x, z_at_intersection));
+                    }
+                }
+
+                inters.Sort((a, b) => a.x.CompareTo(b.x));
+
+                for (int k = 0; k < inters.Count - 1; k += 2)
+                {
+                    int xStart = inters[k].x;
+                    int xEnd = inters[k + 1].x;
+                    float zStart = inters[k].z;
+                    float zEnd = inters[k + 1].z;
+
+                    int currentXStart = Math.Max(xStart, 0);
+                    int currentXEnd = Math.Min(xEnd, z_buffer.GetLength(0) - 1);
+
+                    if (currentXStart > currentXEnd) continue;
+
+                    int spanLength = xEnd - xStart;
+                    float z = zStart;
+                    float zStep = (spanLength) > 0 ? (zEnd - zStart) / (spanLength) : 0f;
+
+                    if (xStart < currentXStart)
+                    {
+                        z += zStep * (currentXStart - xStart);
+                    }
+
+
+                    for (int x = currentXStart; x <= currentXEnd; x++)
+                    {
+                        if (z > z_buffer[x, y])
+                        {
+                            SetPixel(x, y, bmpData, cor);
+                            z_buffer[x, y] = (int)z;
+                        }
+                        z += zStep;
+                    }
+                }
+            }
+        }
+
+        private unsafe void SetPixel(int x, int y, BitmapData bmpData, Color cor)
+        {
+            int bytesPorPixel = 3; // Format24bppRgb
+            int stride = bmpData.Stride;
+
+            // Certifique-se de que (x,y) esteja dentro do bitmap
+            if (x < 0 || x >= bmpData.Width || y < 0 || y >= bmpData.Height)
+                return;
+
+            // Ponteiro para o início da linha
+            byte* linha = (byte*)bmpData.Scan0 + (y * stride);
+            // Posição do pixel em X
+            int pos = x * bytesPorPixel;
+
+            // 24bpp => B, G, R
+            linha[pos + 0] = cor.B;  // Blue
+            linha[pos + 1] = cor.G;  // Green
+            linha[pos + 2] = cor.R;  // Red
+        }
 
         public void AcumularRotacao(float deltaX, float deltaY)
         {
