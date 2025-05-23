@@ -70,8 +70,14 @@
             label14 = new Label();
             tbEscalaG = new TrackBar();
             tabPage2 = new TabPage();
-            checkBox1 = new CheckBox();
-            checkBox2 = new CheckBox();
+            panel1 = new Panel();
+            rbFlat = new RadioButton();
+            panel7 = new Panel();
+            label16 = new Label();
+            label2 = new Label();
+            rbNone = new RadioButton();
+            rbFaceOculta = new RadioButton();
+            rbScanLine = new RadioButton();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -96,6 +102,7 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).BeginInit();
             tabPage2.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
@@ -550,8 +557,7 @@
             // 
             // tabPage2
             // 
-            tabPage2.Controls.Add(checkBox2);
-            tabPage2.Controls.Add(checkBox1);
+            tabPage2.Controls.Add(panel1);
             tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -560,27 +566,95 @@
             tabPage2.Text = "Faces";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // panel1
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(13, 13);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(182, 24);
-            checkBox1.TabIndex = 0;
-            checkBox1.Text = "Remover Faces Ocultas";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            panel1.BackColor = Color.White;
+            panel1.Controls.Add(rbFlat);
+            panel1.Controls.Add(panel7);
+            panel1.Controls.Add(label16);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(rbNone);
+            panel1.Controls.Add(rbFaceOculta);
+            panel1.Controls.Add(rbScanLine);
+            panel1.Location = new Point(0, 1);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(245, 441);
+            panel1.TabIndex = 16;
             // 
-            // checkBox2
+            // rbFlat
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(13, 43);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(89, 24);
-            checkBox2.TabIndex = 1;
-            checkBox2.Text = "ScanLine";
-            checkBox2.UseVisualStyleBackColor = true;
-            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            rbFlat.AutoSize = true;
+            rbFlat.Location = new Point(13, 206);
+            rbFlat.Name = "rbFlat";
+            rbFlat.Size = new Size(54, 24);
+            rbFlat.TabIndex = 9;
+            rbFlat.TabStop = true;
+            rbFlat.Text = "Flat";
+            rbFlat.UseVisualStyleBackColor = true;
+            rbFlat.CheckedChanged += rbFlat_CheckedChanged;
+            // 
+            // panel7
+            // 
+            panel7.BackColor = Color.WhiteSmoke;
+            panel7.Location = new Point(-2, 143);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(250, 10);
+            panel7.TabIndex = 8;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Font = new Font("Segoe UI", 10F);
+            label16.Location = new Point(13, 167);
+            label16.Name = "label16";
+            label16.Size = new Size(94, 23);
+            label16.TabIndex = 7;
+            label16.Text = "Iluminação";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 10F);
+            label2.Location = new Point(13, 11);
+            label2.Name = "label2";
+            label2.Size = new Size(90, 23);
+            label2.TabIndex = 6;
+            label2.Text = "Translação";
+            // 
+            // rbNone
+            // 
+            rbNone.AutoSize = true;
+            rbNone.Checked = true;
+            rbNone.Location = new Point(13, 50);
+            rbNone.Name = "rbNone";
+            rbNone.Size = new Size(66, 24);
+            rbNone.TabIndex = 1;
+            rbNone.TabStop = true;
+            rbNone.Text = "None";
+            rbNone.UseVisualStyleBackColor = true;
+            rbNone.CheckedChanged += rbNone_CheckedChanged;
+            // 
+            // rbFaceOculta
+            // 
+            rbFaceOculta.AutoSize = true;
+            rbFaceOculta.Location = new Point(13, 80);
+            rbFaceOculta.Name = "rbFaceOculta";
+            rbFaceOculta.Size = new Size(181, 24);
+            rbFaceOculta.TabIndex = 2;
+            rbFaceOculta.Text = "Remover Faces Ocultas";
+            rbFaceOculta.UseVisualStyleBackColor = true;
+            rbFaceOculta.CheckedChanged += rbFaceOculta_CheckedChanged;
+            // 
+            // rbScanLine
+            // 
+            rbScanLine.AutoSize = true;
+            rbScanLine.Location = new Point(13, 110);
+            rbScanLine.Name = "rbScanLine";
+            rbScanLine.Size = new Size(88, 24);
+            rbScanLine.TabIndex = 3;
+            rbScanLine.Text = "ScanLine";
+            rbScanLine.UseVisualStyleBackColor = true;
+            rbScanLine.CheckedChanged += rbScanLine_CheckedChanged;
             // 
             // Form1
             // 
@@ -621,7 +695,8 @@
             ((System.ComponentModel.ISupportInitialize)tbEscalaX).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbEscalaG).EndInit();
             tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -673,7 +748,13 @@
         private Label label14;
         private TrackBar tbEscalaG;
         private TabPage tabPage2;
-        private CheckBox checkBox1;
-        private CheckBox checkBox2;
+        private RadioButton rbFaceOculta;
+        private RadioButton rbScanLine;
+        private RadioButton rbNone;
+        private Panel panel1;
+        private Label label2;
+        private Label label16;
+        private RadioButton rbFlat;
+        private Panel panel7;
     }
 }
