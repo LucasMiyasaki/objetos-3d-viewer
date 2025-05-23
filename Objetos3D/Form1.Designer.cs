@@ -208,6 +208,7 @@
             button2.TabIndex = 0;
             button2.Text = "Projeções";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // panel2
             // 
@@ -265,6 +266,7 @@
             tbTransY.Size = new Size(199, 34);
             tbTransY.TabIndex = 7;
             tbTransY.TickStyle = TickStyle.None;
+            tbTransY.Scroll += tbTransY_Scroll;
             // 
             // label6
             // 
@@ -296,6 +298,7 @@
             tbTransX.Size = new Size(199, 34);
             tbTransX.TabIndex = 0;
             tbTransX.TickStyle = TickStyle.None;
+            tbTransX.Scroll += tbTransX_Scroll;
             // 
             // panel5
             // 
@@ -314,6 +317,7 @@
             button1.TabIndex = 0;
             button1.Text = "Reiniciar Transformações";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // panel3
             // 
@@ -350,6 +354,7 @@
             tbRotacaoZ.Size = new Size(199, 34);
             tbRotacaoZ.TabIndex = 9;
             tbRotacaoZ.TickStyle = TickStyle.None;
+            tbRotacaoZ.Scroll += tbRotacaoZ_Scroll;
             // 
             // label8
             // 
@@ -371,6 +376,7 @@
             tbRotacaoY.Size = new Size(199, 34);
             tbRotacaoY.TabIndex = 7;
             tbRotacaoY.TickStyle = TickStyle.None;
+            tbRotacaoY.Scroll += tbRotacaoY_Scroll;
             // 
             // label9
             // 
@@ -402,6 +408,7 @@
             tbRotacaoX.Size = new Size(199, 34);
             tbRotacaoX.TabIndex = 0;
             tbRotacaoX.TickStyle = TickStyle.None;
+            tbRotacaoX.Scroll += tbRotacaoX_Scroll;
             // 
             // panel4
             // 
@@ -442,6 +449,7 @@
             tbEscalaZ.Size = new Size(199, 34);
             tbEscalaZ.TabIndex = 11;
             tbEscalaZ.TickStyle = TickStyle.None;
+            tbEscalaZ.Scroll += tbEscalaZ_Scroll;
             // 
             // label11
             // 
@@ -463,6 +471,7 @@
             tbEscalaY.Size = new Size(199, 34);
             tbEscalaY.TabIndex = 9;
             tbEscalaY.TickStyle = TickStyle.None;
+            tbEscalaY.Scroll += tbEscalaY_Scroll;
             // 
             // btn100x
             // 
@@ -504,6 +513,7 @@
             tbEscalaX.Size = new Size(199, 34);
             tbEscalaX.TabIndex = 7;
             tbEscalaX.TickStyle = TickStyle.None;
+            tbEscalaX.Scroll += tbEscalaX_Scroll;
             // 
             // label13
             // 
@@ -535,6 +545,7 @@
             tbEscalaG.Size = new Size(199, 34);
             tbEscalaG.TabIndex = 0;
             tbEscalaG.TickStyle = TickStyle.None;
+            tbEscalaG.Scroll += tbEscalaG_Scroll;
             // 
             // tabPage2
             // 
