@@ -41,6 +41,13 @@ namespace Objetos3D
         private bool removerFaces = false;
         private bool scanLine = false;
 
+        //iluminação
+        private string shade = "";
+        private bool lampada = false;
+        private Point offset;
+        private Point posLuz;
+        private float luzZ = 100;
+
         public Form1()
         {
             InitializeComponent();
@@ -56,6 +63,10 @@ namespace Objetos3D
             this.KeyUp += Form1_KeyUp;
             this.KeyPreview = true; // Importante: permite que o formulário capture as teclas mesmo com o foco no PictureBox
 
+            pbLuz.Hide();
+            posLuz = new Point(
+                pbLuz.Left + pbLuz.Width / 2,
+                pbLuz.Top + pbLuz.Height / 2);
         }
 
         private void abrirNovo()
@@ -86,11 +97,15 @@ namespace Objetos3D
             tbEscalaX.Value = 0;
             tbEscalaY.Value = 0;
             tbEscalaZ.Value = 0;
+            pbLuz.Hide();
+            scanLine = false;
+            rbNone.Checked = true;
         }
 
         private void desenhaObjeto()
         {
-            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces, scanLine);
+            if(objeto != null)
+                pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces, scanLine, shade, posLuz, null, luzZ);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -174,7 +189,6 @@ namespace Objetos3D
             {
                 float fator = (e.Delta > 0) ? 1.1f : 0.9f;
                 int step = (e.Delta > 0) ? 1 : -1;
-
                 if (eixoEscalaAtivo == "X")
                 {
                     objeto.AcumularEscala(fator, 1f, 1f);
@@ -195,6 +209,11 @@ namespace Objetos3D
 
                     escZAc = Clamp(escZAc + step, tbEscalaZ.Minimum, tbEscalaZ.Maximum);
                     tbEscalaZ.Value = escZAc;
+                }
+                else if (eixoEscalaAtivo == "L")
+                {
+                    luzZ += (e.Delta > 0) ? 10f : -10f;
+                    labelZ.Text = "Z: " + luzZ;
                 }
                 else
                 {
@@ -237,6 +256,7 @@ namespace Objetos3D
             if (e.KeyCode == Keys.X) eixoEscalaAtivo = "X";
             if (e.KeyCode == Keys.Y) eixoEscalaAtivo = "Y";
             if (e.KeyCode == Keys.Z) eixoEscalaAtivo = "Z";
+            if (e.KeyCode == Keys.L) eixoEscalaAtivo = "L";
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -385,16 +405,68 @@ namespace Objetos3D
             frm.ShowDialog(this);
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void rbFacesOcultas_CheckedChanged(object sender, EventArgs e)
         {
-            removerFaces = checkBox1.Checked;
+            removerFaces = rbFacesOcultas.Checked;
             desenhaObjeto();
         }
 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void rbFlat_CheckedChanged(object sender, EventArgs e)
         {
-            scanLine = checkBox2.Checked;
+            shade = "Flat";
+            scanLine = true;
+            pbLuz.Show();
             desenhaObjeto();
         }
+
+        private void rbGouraud_CheckedChanged(object sender, EventArgs e)
+        {
+            shade = "Gouraud";
+            scanLine = true;
+            pbLuz.Show();
+            desenhaObjeto();
+        }
+
+        private void rbPhong_CheckedChanged(object sender, EventArgs e)
+        {
+            shade = "Phong";
+            scanLine = true;
+            pbLuz.Show();
+            desenhaObjeto();
+        }
+
+        private void rbNone_CheckedChanged(object sender, EventArgs e)
+        {
+            scanLine = false;
+            shade = "";
+            pbLuz.Hide();
+            desenhaObjeto();
+        }
+
+        private void pbLuz_MouseDown(object sender, MouseEventArgs e)
+        {
+            lampada = true;
+            offset = e.Location;
+        }
+
+        private void pbLuz_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (lampada)
+            {
+                // Calcula a nova posição relativa ao Form
+                pbLuz.Left = Cursor.Position.X - this.Left - offset.X - SystemInformation.FrameBorderSize.Width;
+                pbLuz.Top = Cursor.Position.Y - this.Top - offset.Y - SystemInformation.CaptionHeight;
+            }
+        }
+
+        private void pbLuz_MouseUp(object sender, MouseEventArgs e)
+        {
+            lampada = false;
+            posLuz = new Point(
+                pbLuz.Left + pbLuz.Width / 2,
+                pbLuz.Top + pbLuz.Height / 2);
+            desenhaObjeto();
+        }
+
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             pictureBox1 = new PictureBox();
             menuStrip1 = new MenuStrip();
             arquivoToolStripMenuItem = new ToolStripMenuItem();
@@ -35,6 +36,7 @@
             ajudaToolStripMenuItem = new ToolStripMenuItem();
             controlesToolStripMenuItem = new ToolStripMenuItem();
             splitContainer1 = new SplitContainer();
+            pbLuz = new PictureBox();
             tabControl = new TabControl();
             tabPage1 = new TabPage();
             panel6 = new Panel();
@@ -70,14 +72,22 @@
             label14 = new Label();
             tbEscalaG = new TrackBar();
             tabPage2 = new TabPage();
-            checkBox1 = new CheckBox();
-            checkBox2 = new CheckBox();
+            rbPhong = new RadioButton();
+            rbGouraud = new RadioButton();
+            label1 = new Label();
+            panel1 = new Panel();
+            rbFlat = new RadioButton();
+            rbFacesOcultas = new RadioButton();
+            rbNone = new RadioButton();
+            label2 = new Label();
+            labelZ = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbLuz).BeginInit();
             tabControl.SuspendLayout();
             tabPage1.SuspendLayout();
             panel6.SuspendLayout();
@@ -157,6 +167,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(pbLuz);
             splitContainer1.Panel1.Controls.Add(pictureBox1);
             // 
             // splitContainer1.Panel2
@@ -165,6 +176,20 @@
             splitContainer1.Size = new Size(1403, 759);
             splitContainer1.SplitterDistance = 1144;
             splitContainer1.TabIndex = 15;
+            // 
+            // pbLuz
+            // 
+            pbLuz.BackColor = SystemColors.Window;
+            pbLuz.Image = (Image)resources.GetObject("pbLuz.Image");
+            pbLuz.Location = new Point(180, 158);
+            pbLuz.Name = "pbLuz";
+            pbLuz.Size = new Size(40, 35);
+            pbLuz.SizeMode = PictureBoxSizeMode.Zoom;
+            pbLuz.TabIndex = 20;
+            pbLuz.TabStop = false;
+            pbLuz.MouseDown += pbLuz_MouseDown;
+            pbLuz.MouseMove += pbLuz_MouseMove;
+            pbLuz.MouseUp += pbLuz_MouseUp;
             // 
             // tabControl
             // 
@@ -550,37 +575,120 @@
             // 
             // tabPage2
             // 
-            tabPage2.Controls.Add(checkBox2);
-            tabPage2.Controls.Add(checkBox1);
+            tabPage2.BackColor = Color.White;
+            tabPage2.Controls.Add(labelZ);
+            tabPage2.Controls.Add(rbPhong);
+            tabPage2.Controls.Add(rbGouraud);
+            tabPage2.Controls.Add(label1);
+            tabPage2.Controls.Add(panel1);
+            tabPage2.Controls.Add(rbFlat);
+            tabPage2.Controls.Add(rbFacesOcultas);
+            tabPage2.Controls.Add(rbNone);
+            tabPage2.Controls.Add(label2);
             tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(247, 726);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Faces";
-            tabPage2.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // rbPhong
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(13, 13);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(182, 24);
-            checkBox1.TabIndex = 0;
-            checkBox1.Text = "Remover Faces Ocultas";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            rbPhong.AutoSize = true;
+            rbPhong.Location = new Point(13, 242);
+            rbPhong.Name = "rbPhong";
+            rbPhong.Size = new Size(72, 24);
+            rbPhong.TabIndex = 15;
+            rbPhong.TabStop = true;
+            rbPhong.Text = "Phong";
+            rbPhong.UseVisualStyleBackColor = true;
+            rbPhong.CheckedChanged += rbPhong_CheckedChanged;
             // 
-            // checkBox2
+            // rbGouraud
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(13, 43);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(89, 24);
-            checkBox2.TabIndex = 1;
-            checkBox2.Text = "ScanLine";
-            checkBox2.UseVisualStyleBackColor = true;
-            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            rbGouraud.AutoSize = true;
+            rbGouraud.Location = new Point(13, 212);
+            rbGouraud.Name = "rbGouraud";
+            rbGouraud.Size = new Size(87, 24);
+            rbGouraud.TabIndex = 14;
+            rbGouraud.TabStop = true;
+            rbGouraud.Text = "Gouraud";
+            rbGouraud.UseVisualStyleBackColor = true;
+            rbGouraud.CheckedChanged += rbGouraud_CheckedChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 10F);
+            label1.Location = new Point(13, 141);
+            label1.Name = "label1";
+            label1.Size = new Size(94, 23);
+            label1.TabIndex = 13;
+            label1.Text = "Iluminação";
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.WhiteSmoke;
+            panel1.Location = new Point(0, 114);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(250, 10);
+            panel1.TabIndex = 12;
+            // 
+            // rbFlat
+            // 
+            rbFlat.AutoSize = true;
+            rbFlat.Location = new Point(13, 182);
+            rbFlat.Name = "rbFlat";
+            rbFlat.Size = new Size(54, 24);
+            rbFlat.TabIndex = 11;
+            rbFlat.TabStop = true;
+            rbFlat.Text = "Flat";
+            rbFlat.UseVisualStyleBackColor = true;
+            rbFlat.CheckedChanged += rbFlat_CheckedChanged;
+            // 
+            // rbFacesOcultas
+            // 
+            rbFacesOcultas.AutoSize = true;
+            rbFacesOcultas.Location = new Point(13, 77);
+            rbFacesOcultas.Name = "rbFacesOcultas";
+            rbFacesOcultas.Size = new Size(181, 24);
+            rbFacesOcultas.TabIndex = 9;
+            rbFacesOcultas.Text = "Remover Faces Ocultas";
+            rbFacesOcultas.UseVisualStyleBackColor = true;
+            rbFacesOcultas.CheckedChanged += rbFacesOcultas_CheckedChanged;
+            // 
+            // rbNone
+            // 
+            rbNone.AutoSize = true;
+            rbNone.Checked = true;
+            rbNone.Location = new Point(13, 47);
+            rbNone.Name = "rbNone";
+            rbNone.Size = new Size(66, 24);
+            rbNone.TabIndex = 8;
+            rbNone.TabStop = true;
+            rbNone.Text = "None";
+            rbNone.UseVisualStyleBackColor = true;
+            rbNone.CheckedChanged += rbNone_CheckedChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 10F);
+            label2.Location = new Point(13, 12);
+            label2.Name = "label2";
+            label2.Size = new Size(50, 23);
+            label2.TabIndex = 7;
+            label2.Text = "Faces";
+            // 
+            // labelZ
+            // 
+            labelZ.AutoSize = true;
+            labelZ.Font = new Font("Segoe UI", 9F);
+            labelZ.Location = new Point(13, 281);
+            labelZ.Name = "labelZ";
+            labelZ.Size = new Size(49, 20);
+            labelZ.TabIndex = 16;
+            labelZ.Text = "Z: 100";
             // 
             // Form1
             // 
@@ -600,6 +708,7 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pbLuz).EndInit();
             tabControl.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             panel6.ResumeLayout(false);
@@ -673,7 +782,14 @@
         private Label label14;
         private TrackBar tbEscalaG;
         private TabPage tabPage2;
-        private CheckBox checkBox1;
-        private CheckBox checkBox2;
+        private RadioButton rbFacesOcultas;
+        private RadioButton rbNone;
+        private Label label2;
+        private RadioButton rbPhong;
+        private RadioButton rbGouraud;
+        private Panel panel1;
+        private RadioButton rbFlat;
+        private PictureBox pbLuz;
+        private Label labelZ;
     }
 }
