@@ -175,7 +175,7 @@ namespace Objetos3D.Classes
             return _frameBuffer;
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, bool removerFaces, bool scanLine, string shadding, Point luz, Matriz4x4 m = null)
+        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, bool removerFaces, bool scanLine, string shadding, Point luz, Matriz4x4 m = null, float luzZ = 100)
         {
             Bitmap bmp = GetFrameBuffer(pictureBoxWidth, pictureBoxHeight);
 
@@ -194,7 +194,10 @@ namespace Objetos3D.Classes
 
             if (scanLine)
             {
-                SetLightPos(luz.X, luz.Y, 100);
+                float luzX = luz.X - pictureBoxWidth / 2f;
+                float luzY = -(luz.Y - pictureBoxHeight / 2f);
+
+                SetLightPos(luzX, luzY, luzZ);
                 for (int x = 0; x < pictureBoxWidth; x++)
                 {
                     Span<int> row = MemoryMarshal.CreateSpan(ref z_buffer[x, 0], pictureBoxHeight);

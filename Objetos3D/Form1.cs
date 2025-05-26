@@ -41,10 +41,12 @@ namespace Objetos3D
         private bool removerFaces = false;
         private bool scanLine = false;
 
+        //iluminação
         private string shade = "";
         private bool lampada = false;
         private Point offset;
         private Point posLuz;
+        private float luzZ = 100;
 
         public Form1()
         {
@@ -62,6 +64,9 @@ namespace Objetos3D
             this.KeyPreview = true; // Importante: permite que o formulário capture as teclas mesmo com o foco no PictureBox
 
             pbLuz.Hide();
+            posLuz = new Point(
+                pbLuz.Left + pbLuz.Width / 2,
+                pbLuz.Top + pbLuz.Height / 2);
         }
 
         private void abrirNovo()
@@ -100,7 +105,7 @@ namespace Objetos3D
         private void desenhaObjeto()
         {
             if(objeto != null)
-                pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces, scanLine, shade, posLuz, null);
+                pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces, scanLine, shade, posLuz, null, luzZ);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -184,7 +189,6 @@ namespace Objetos3D
             {
                 float fator = (e.Delta > 0) ? 1.1f : 0.9f;
                 int step = (e.Delta > 0) ? 1 : -1;
-
                 if (eixoEscalaAtivo == "X")
                 {
                     objeto.AcumularEscala(fator, 1f, 1f);
@@ -205,6 +209,11 @@ namespace Objetos3D
 
                     escZAc = Clamp(escZAc + step, tbEscalaZ.Minimum, tbEscalaZ.Maximum);
                     tbEscalaZ.Value = escZAc;
+                }
+                else if (eixoEscalaAtivo == "L")
+                {
+                    luzZ += (e.Delta > 0) ? 10f : -10f;
+                    labelZ.Text = "Z: " + luzZ;
                 }
                 else
                 {
@@ -247,6 +256,7 @@ namespace Objetos3D
             if (e.KeyCode == Keys.X) eixoEscalaAtivo = "X";
             if (e.KeyCode == Keys.Y) eixoEscalaAtivo = "Y";
             if (e.KeyCode == Keys.Z) eixoEscalaAtivo = "Z";
+            if (e.KeyCode == Keys.L) eixoEscalaAtivo = "L";
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -452,8 +462,9 @@ namespace Objetos3D
         private void pbLuz_MouseUp(object sender, MouseEventArgs e)
         {
             lampada = false;
-            posLuz.X = pbLuz.Left;
-            posLuz.Y = pbLuz.Top;
+            posLuz = new Point(
+                pbLuz.Left + pbLuz.Width / 2,
+                pbLuz.Top + pbLuz.Height / 2);
             desenhaObjeto();
         }
 

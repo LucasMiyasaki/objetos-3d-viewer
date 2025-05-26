@@ -80,6 +80,7 @@
             rbFacesOcultas = new RadioButton();
             rbNone = new RadioButton();
             label2 = new Label();
+            labelZ = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -180,10 +181,10 @@
             // 
             pbLuz.BackColor = SystemColors.Window;
             pbLuz.Image = (Image)resources.GetObject("pbLuz.Image");
-            pbLuz.Location = new Point(326, 231);
+            pbLuz.Location = new Point(180, 158);
             pbLuz.Name = "pbLuz";
-            pbLuz.Size = new Size(56, 56);
-            pbLuz.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbLuz.Size = new Size(40, 35);
+            pbLuz.SizeMode = PictureBoxSizeMode.Zoom;
             pbLuz.TabIndex = 20;
             pbLuz.TabStop = false;
             pbLuz.MouseDown += pbLuz_MouseDown;
@@ -575,6 +576,7 @@
             // tabPage2
             // 
             tabPage2.BackColor = Color.White;
+            tabPage2.Controls.Add(labelZ);
             tabPage2.Controls.Add(rbPhong);
             tabPage2.Controls.Add(rbGouraud);
             tabPage2.Controls.Add(label1);
@@ -678,6 +680,16 @@
             label2.TabIndex = 7;
             label2.Text = "Faces";
             // 
+            // labelZ
+            // 
+            labelZ.AutoSize = true;
+            labelZ.Font = new Font("Segoe UI", 9F);
+            labelZ.Location = new Point(13, 281);
+            labelZ.Name = "labelZ";
+            labelZ.Size = new Size(49, 20);
+            labelZ.TabIndex = 16;
+            labelZ.Text = "Z: 100";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -778,5 +790,6 @@
         private Panel panel1;
         private RadioButton rbFlat;
         private PictureBox pbLuz;
+        private Label labelZ;
     }
 }
