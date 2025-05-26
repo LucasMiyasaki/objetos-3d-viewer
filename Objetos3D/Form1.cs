@@ -39,6 +39,10 @@ namespace Objetos3D
 
         //faces
         private bool removerFaces = false;
+        private bool scanLine = false;
+
+        //iluminação
+        private string shadder = "";
 
         public Form1()
         {
@@ -85,11 +89,14 @@ namespace Objetos3D
             tbEscalaX.Value = 0;
             tbEscalaY.Value = 0;
             tbEscalaZ.Value = 0;
+            shadder = "";
+            rbNone.Checked = true;
         }
 
         private void desenhaObjeto()
         {
-            pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces);
+            if (objeto != null)
+                pictureBox1.Image = objeto.desenhaObjeto(pictureBox1.Width, pictureBox1.Height, removerFaces, scanLine, shadder);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -384,10 +391,43 @@ namespace Objetos3D
             frm.ShowDialog(this);
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void rbFaceOculta_CheckedChanged(object sender, EventArgs e)
         {
-            removerFaces = checkBox1.Checked;
+            removerFaces = rbFaceOculta.Checked;
             desenhaObjeto();
+        }
+
+        private void rbScanLine_CheckedChanged(object sender, EventArgs e)
+        {
+            scanLine = rbScanLine.Checked;
+            desenhaObjeto();
+        }
+
+        private void rbNone_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbFaceOculta.Checked)
+            {
+                removerFaces = false;
+                scanLine = false;
+
+                desenhaObjeto();
+            }
+        }
+
+        private void rbFlat_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rbFlat.Checked)
+            {
+                shadder = "Flat";
+                scanLine = true;
+                desenhaObjeto();
+            }
+            else
+            {
+                shadder = "";
+                scanLine = false;
+                desenhaObjeto();
+            }
         }
     }
 }
