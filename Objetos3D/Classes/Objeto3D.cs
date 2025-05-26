@@ -23,17 +23,10 @@ namespace Objetos3D.Classes
         private Bitmap _frameBuffer;
         private readonly object _frameLock = new();
 
-        public Light IluminacaoLuz { get; set; }
-        public Material MaterialObjeto { get; set; }
-        public string ShadingModel { get; set; }
-
         public Objeto3D()
         {
             listaVerticesOriginais = new List<(float x, float y, float z)>();
             listaFaces = new List<(int a, int b, int c)>();
-            IluminacaoLuz = new Light();
-            MaterialObjeto = new Material();
-            ShadingModel = "";
         }
 
         public Objeto3D(Objeto3D objeto)
@@ -137,7 +130,7 @@ namespace Objetos3D.Classes
             return _frameBuffer;
         }
 
-        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, bool removerFaces, bool scanLine, string shadder, Matriz4x4 m = null)
+        public Bitmap desenhaObjeto(int pictureBoxWidth, int pictureBoxHeight, bool removerFaces, bool scanLine, Matriz4x4 m = null)
         {
             Bitmap bmp = GetFrameBuffer(pictureBoxWidth, pictureBoxHeight);
 
@@ -145,19 +138,18 @@ namespace Objetos3D.Classes
                 g.Clear(Color.White);
 
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
-
-            ShadingModel = shadder;
+            BitmapData bmpData = bmp.LockBits(rect,
+                                            ImageLockMode.ReadWrite,
+                                            bmp.PixelFormat);
 
             int[,] z_buffer = new int[pictureBoxWidth, pictureBoxHeight];
+
             if (scanLine)
             {
                 for (int x = 0; x < pictureBoxWidth; x++)
                 {
-                    for (int y = 0; y < pictureBoxHeight; y++)
-                    {
-                        z_buffer[x, y] = -999;
-                    }
+                    Span<int> row = MemoryMarshal.CreateSpan(ref z_buffer[x, 0], pictureBoxHeight);
+                    row.Fill(-999);
                 }
             }
 
@@ -169,71 +161,51 @@ namespace Objetos3D.Classes
                 var vertices = GetListaVerticeOriginais();
                 var faces = GetListaFaces();
 
-                Vector3 viewVector = Vector3.Normalize(new Vector3(0, 0, 1)); // Observador fixo olhando de Z+ para a origem
-
                 foreach (var face in faces)
                 {
                     bool visivel = true;
 
-                    var v1_obj = vertices[face.a - 1];
-                    var v2_obj = vertices[face.b - 1];
-                    var v3_obj = vertices[face.c - 1];
+                    var v1 = vertices[face.a - 1];
+                    var v2 = vertices[face.b - 1];
+                    var v3 = vertices[face.c - 1];
 
                     var matrizFinal = matrizAcumulada;
                     if (m != null) matrizFinal *= m;
 
-                    var t1_tuple = Matriz4x4.Transform(v1_obj, matrizFinal);
-                    var t2_tuple = Matriz4x4.Transform(v2_obj, matrizFinal);
-                    var t3_tuple = Matriz4x4.Transform(v3_obj, matrizFinal);
-
-                    Vector3 t1 = new Vector3(t1_tuple.x, t1_tuple.y, t1_tuple.z);
-                    Vector3 t2 = new Vector3(t2_tuple.x, t2_tuple.y, t2_tuple.z);
-                    Vector3 t3 = new Vector3(t3_tuple.x, t3_tuple.y, t3_tuple.z);
-
-                    Vector3 normalFace = CalcularNormalDaFace(t1, t2, t3);
+                    var t1 = Matriz4x4.Transform(v1, matrizFinal);
+                    var t2 = Matriz4x4.Transform(v2, matrizFinal);
+                    var t3 = Matriz4x4.Transform(v3, matrizFinal);
 
                     if (removerFaces)
                     {
-                        if (Vector3.Dot(normalFace, viewVector) <= 0)
+                        var normal = CalcularNormal(t1, t2, t3);
+                        var remocao = 0 * normal.x + 0 * normal.y + (-1) * normal.z;
+                        if (remocao >= 0)
                             visivel = false;
                     }
 
-                    Point p1_screen = new Point((int)t1.X + centroX, (int)-t1.Y + centroY);
-                    Point p2_screen = new Point((int)t2.X + centroX, (int)-t2.Y + centroY);
-                    Point p3_screen = new Point((int)t3.X + centroX, (int)-t3.Y + centroY);
-
-                    Color corDaFace = Color.Gray;
+                    Point p1 = new((int)t1.x + centroX,
+                                   (int)-t1.y + centroY);
+                    Point p2 = new((int)t2.x + centroX,
+                                   (int)-t2.y + centroY);
+                    Point p3 = new((int)t3.x + centroX,
+                                   (int)-t3.y + centroY);
 
                     if (visivel)
                     {
-                        if (scanLine) // Preenchimento para Flat Shading
-                        {
-                            if(ShadingModel == "Flat")
-                            {
-                                Vector3 pontoCentralFace = (t1 + t2 + t3) / 3.0f;
-                                corDaFace = CalcularCorPhong(pontoCentralFace, normalFace, IluminacaoLuz, MaterialObjeto, viewVector);
-                            }
+                        DesenharLinhaBresenham(bmpData, p1, p2, (int)t1.z, (int)t2.z, Color.Black, scanLine, z_buffer);
+                        DesenharLinhaBresenham(bmpData, p2, p3, (int)t2.z, (int)t3.z, Color.Black, scanLine, z_buffer);
+                        DesenharLinhaBresenham(bmpData, p3, p1, (int)t3.z, (int)t1.z, Color.Black, scanLine, z_buffer);
+                    }
 
-                            Poligono poligono = new Poligono();
-                            poligono.X.AddRange(new[] { p1_screen.X, p2_screen.X, p3_screen.X });
-                            poligono.Y.AddRange(new[] { p1_screen.Y, p2_screen.Y, p3_screen.Y });
-                            poligono.Z.AddRange(new[] { (int)t1.Z, (int)t2.Z, (int)t3.Z });
-                            ScanLineFill(poligono, corDaFace, bmpData, z_buffer);
+                    if (scanLine && visivel)
+                    {
+                        Poligono poligono = new Poligono();
+                        poligono.X.AddRange(new[] { p1.X, p2.X, p3.X });
+                        poligono.Y.AddRange(new[] { p1.Y, p2.Y, p3.Y });
+                        poligono.Z.AddRange(new[] { (int)t1.z, (int)t2.z, (int)t3.z });
 
-                            if(ShadingModel == "")
-                            {
-                                DesenharLinhaBresenham(bmpData, p1_screen, p2_screen, (int)t1.Z, (int)t2.Z, Color.Black, scanLine, z_buffer);
-                                DesenharLinhaBresenham(bmpData, p2_screen, p3_screen, (int)t2.Z, (int)t3.Z, Color.Black, scanLine, z_buffer);
-                                DesenharLinhaBresenham(bmpData, p3_screen, p1_screen, (int)t3.Z, (int)t1.Z, Color.Black, scanLine, z_buffer);
-                            }
-                        }
-                        else
-                        {
-                            Color corAresta = (ShadingModel == "Flat") ? corDaFace : Color.Black;
-                            DesenharLinhaBresenham(bmpData, p1_screen, p2_screen, (int)t1.Z, (int)t2.Z, corAresta, scanLine, z_buffer);
-                            DesenharLinhaBresenham(bmpData, p2_screen, p3_screen, (int)t2.Z, (int)t3.Z, corAresta, scanLine, z_buffer);
-                            DesenharLinhaBresenham(bmpData, p3_screen, p1_screen, (int)t3.Z, (int)t1.Z, corAresta, scanLine, z_buffer);
-                        }
+                        ScanLineFill(poligono, Color.Gray, bmpData, z_buffer);
                     }
                 }
             }
@@ -435,56 +407,6 @@ namespace Objetos3D.Classes
             float comprimento = MathF.Sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
 
             return (n.x / comprimento, n.y / comprimento, n.z / comprimento);
-        }
-
-        private Vector3 CalcularNormalDaFace(Vector3 v1, Vector3 v2, Vector3 v3)
-        {
-            Vector3 ab = v2 - v1;
-            Vector3 ac = v3 - v1;
-            Vector3 normal = Vector3.Cross(ab, ac);
-
-            if (normal.LengthSquared() > 0)
-                return Vector3.Normalize(normal);
-            return Vector3.Zero;
-        }
-
-        private Color CalcularCorPhong(Vector3 ponto, Vector3 normal, Light luz, Material material, Vector3 viewVector)
-        {
-            // Componente Ambiente
-            var iaF = luz.GetIaFloats();
-            var kaF = material.GetKaFloats();
-            float rAmb = iaF.r * kaF.r;
-            float gAmb = iaF.g * kaF.g;
-            float bAmb = iaF.b * kaF.b;
-
-            // Vetor L (para a luz)
-            Vector3 lVec = Vector3.Normalize(luz.Position - ponto);
-
-            // Componente Difusa
-            var idF = luz.GetIdFloats();
-            var kdF = material.GetKdFloats();
-            float dotLN = Math.Max(0, Vector3.Dot(lVec, normal));
-            float rDiff = idF.r * kdF.r * dotLN;
-            float gDiff = idF.g * kdF.g * dotLN;
-            float bDiff = idF.b * kdF.b * dotLN;
-
-            // Componente Especular
-            var isF = luz.GetIsFloats();
-            var ksF = material.GetKsFloats();
-            Vector3 hVec = Vector3.Normalize(lVec + viewVector); // Vetor Halfway [cite: 10, 11, 136]
-            float dotHN = Math.Max(0, Vector3.Dot(hVec, normal));
-            float specFactor = (float)Math.Pow(dotHN, material.Shininess);
-
-            float rSpec = isF.r * ksF.r * specFactor;
-            float gSpec = isF.g * ksF.g * specFactor;
-            float bSpec = isF.b * ksF.b * specFactor;
-
-            // Cor final
-            int r = (int)(Math.Clamp(rAmb + rDiff + rSpec, 0, 1) * 255);
-            int g = (int)(Math.Clamp(gAmb + gDiff + gSpec, 0, 1) * 255);
-            int b = (int)(Math.Clamp(bAmb + bDiff + bSpec, 0, 1) * 255);
-
-            return Color.FromArgb(r, g, b);
         }
     }
 }
